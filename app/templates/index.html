@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbfbfa">
+  <title>Draftly — редактор товарных карточек</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body data-mobile-pane="result">
+  <a class="skip-link" href="#workspace">К редактору</a>
+  <header class="app-header">
+    <a class="brand" href="/" aria-label="Draftly — главная"><canvas id="brand-orb" width="32" height="32" aria-hidden="true"></canvas><span>Draftly<span class="brand-period">.</span></span></a>
+    <span class="header-divider"></span><span class="app-caption">Товарный контент</span>
+    <div class="header-actions"><span class="local-label"><span class="tiny-dot"></span>Локальное рабочее место</span><button class="text-btn help-trigger" type="button"><span data-icon="help"></span><span>Как это работает</span></button></div>
+  </header>
+  <div class="app-layout">
+    <aside class="sidebar" aria-label="Выбор товара">
+      <div class="sidebar-title"><span>Рабочая область</span><span data-icon="folder"></span></div>
+      <div class="sidebar-heading"><h2>Товары</h2><span class="number-badge" id="product-count">2</span></div>
+      <nav id="product-list" class="product-list" aria-label="Примеры товаров"></nav>
+      <button type="button" class="new-product" id="new-product"><span data-icon="plus"></span>Новый товар</button>
+      <div class="sidebar-note"><span class="tiny-dot"></span><span>Примеры из каталога<br>«СОЮЗ-ПРИБОР»</span></div>
+      <div class="sidebar-footer"><div class="sidebar-footer-title"><span data-icon="file"></span><span>Черновик, не публикация</span></div><p>Готовую карточку проверьте<br>и передайте в каталог.</p><a href="/docs" target="_blank" rel="noopener" class="api-link">Документация API <span data-icon="external"></span></a></div>
+    </aside>
+    <main class="workspace" id="workspace">
+      <div class="page-heading"><div><div class="breadcrumb">Каталог <span>/</span> Подготовка карточки</div><h1>Редактор карточки</h1><p><span class="desktop-copy">Исходные данные слева. Готовый текст — справа.</span><span class="mobile-copy">Данные и результат — в отдельных вкладках.</span></p></div><button class="quiet-btn" id="import-json" type="button"><span data-icon="upload"></span>Импорт JSON</button><input type="file" id="file-input" accept=".json,application/json" hidden></div>
+      <div class="mobile-pane-tabs" role="group" aria-label="Панель редактора"><button type="button" data-mobile-view="source">Исходные данные</button><button type="button" class="active" data-mobile-view="result">Карточка товара</button></div>
+      <div class="editor-layout">
+        <section class="source-pane" aria-label="Исходные данные">
+          <div class="pane-heading"><h2>Исходные данные</h2><span id="input-state" class="subtle-state">Пример</span></div>
+          <div class="input-tabs tabs" role="tablist" aria-label="Способ ввода"><button type="button" id="input-tab-fields" class="tab active" role="tab" aria-selected="true" aria-controls="fields-panel" data-input-tab="fields">Поля</button><button type="button" id="input-tab-json" class="tab" role="tab" aria-selected="false" aria-controls="raw-panel" data-input-tab="json" tabindex="-1">JSON</button></div>
+          <div class="source-content">
+            <div id="input-error" class="inline-alert" role="alert" hidden></div>
+            <form id="fields-panel" class="fields-panel" role="tabpanel" aria-labelledby="input-tab-fields" novalidate>
+              <fieldset id="source-fields">
+                <label class="field"><span>Название товара <span class="required-dot">*</span></span><input id="field-name" name="name" autocomplete="off" maxlength="300" placeholder="Например, манометр DM 02"></label>
+                <label class="field"><span>Производитель</span><input id="field-manufacturer" name="manufacturer" autocomplete="off" placeholder="Название производителя"></label>
+                <label class="field"><span>Тип прибора</span><input id="field-type" name="product_type" autocomplete="off" placeholder="Например, манометр"></label>
+                <div class="section-label"><span>Характеристики</span><span class="muted" id="spec-count">—</span></div>
+                <div id="spec-rows" class="spec-rows"></div>
+                <div class="spec-actions"><button type="button" class="text-btn" id="toggle-specs">Все характеристики <span data-icon="chevron-down"></span></button><button class="text-btn" id="add-spec" type="button" title="Добавить характеристику"><span data-icon="plus"></span>Добавить</button></div>
+                <label class="field description-field"><span>Описание из источника</span><textarea id="field-description" name="description" rows="4" placeholder="Описание товара или фрагмент технического паспорта"></textarea></label>
+                <details class="source-details"><summary>Источник и недостающие поля <span data-icon="chevron-down"></span></summary><div class="source-details-body"><label class="field"><span>Ссылка на источник</span><input id="field-source" type="url" name="source_url" placeholder="https://…"></label><label class="field"><span>Какие характеристики проверить</span><textarea id="field-expected" rows="2" placeholder="По одному названию на строке"></textarea><small>Без значения они будут отмечены «данных нет».</small></label></div></details>
+              </fieldset>
+            </form>
+            <div id="raw-panel" role="tabpanel" aria-labelledby="input-tab-json" hidden><label class="sr-only" for="json-input">Исходный JSON товара</label><textarea id="json-input" class="json-editor" spellcheck="false"></textarea><button class="text-btn format-json" id="format-json" type="button"><span data-icon="code"></span>Форматировать JSON</button></div>
+          </div>
+          <div class="source-bottom"><button class="primary-btn" id="generate" type="button"><span>Подготовить карточку</span><span data-icon="arrow-right"></span></button><button class="sample-btn" id="show-demo" type="button">Открыть готовый образец</button><p class="privacy-note"><span data-icon="lock"></span>По умолчанию — Ollama без API-ключа</p></div>
+        </section>
+        <section class="output-pane" aria-label="Результат">
+          <div class="pane-heading output-heading"><div class="output-title"><h2>Карточка товара</h2><span class="status-badge" id="status">Образец</span></div><div class="output-tools"><button type="button" class="tool-btn" id="copy" title="Скопировать карточку" aria-label="Скопировать карточку"><span data-icon="copy"></span></button><div class="export-wrap"><button type="button" class="export-btn" id="export-menu-toggle" aria-expanded="false" aria-controls="export-menu"><span data-icon="download"></span><span>Экспорт</span><span data-icon="chevron-down"></span></button><div class="export-menu" id="export-menu" hidden><button type="button" data-export="json">Скачать JSON <span>.json</span></button><button type="button" data-export="markdown">Скачать Markdown <span>.md</span></button></div></div></div></div>
+          <div class="output-tabs tabs" role="tablist" aria-label="Раздел карточки">
+            <button type="button" id="tab-description" class="tab active" role="tab" aria-selected="true" aria-controls="result" data-tab="description">Описание</button>
+            <button type="button" id="tab-specs" class="tab" role="tab" aria-selected="false" aria-controls="result" data-tab="specs" tabindex="-1">Характеристики</button>
+            <button type="button" id="tab-manager" class="tab" role="tab" aria-selected="false" aria-controls="result" data-tab="manager" tabindex="-1">Для менеджера</button>
+            <span class="tabs-spacer"></span><button type="button" id="tab-json" class="tab code-tab" role="tab" aria-selected="false" aria-controls="result" data-tab="json" tabindex="-1">JSON</button><button type="button" id="tab-markdown" class="tab code-tab" role="tab" aria-selected="false" aria-controls="result" data-tab="markdown" tabindex="-1">MD</button>
+          </div>
+          <div id="stale-notice" class="stale-notice" hidden><span data-icon="info"></span><span>Исходные данные изменены. Подготовьте карточку заново.</span></div>
+          <div id="result-error" class="result-error" role="alert" hidden></div>
+          <div class="result-container">
+            <div id="result" class="result" role="tabpanel" aria-labelledby="tab-description" tabindex="0"></div>
+            <div id="loading" class="loading-state" role="status" hidden><canvas id="loading-orb" width="64" height="64" aria-hidden="true"></canvas><h3>Подготавливаем карточку</h3><p>Формируем текст на основе ваших данных.<br>Технические значения сохраняем из источника.</p><button class="quiet-btn" id="cancel" type="button">Отменить</button></div>
+          </div>
+          <div class="review-strip" id="review-strip" hidden><span class="review-icon" data-icon="info"></span><div><strong id="review-title">Проверьте перед публикацией</strong><span id="review-text"></span></div><button type="button" class="text-btn" id="review-open">Посмотреть <span data-icon="arrow-right"></span></button></div>
+          <footer class="output-footer"><span id="output-origin">Готовый пример · без вызова API</span><span>Проверка редактором обязательна</span></footer>
+        </section>
+      </div>
+      <footer class="workspace-footer"><span>Факты — из источника. Формулировки — от модели.</span><span>Draftly / 01</span></footer>
+    </main>
+  </div>
+  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-heading"><h2 id="help-title">Как работать с карточкой</h2><button class="tool-btn" id="close-help" type="button" aria-label="Закрыть инструкцию"><span data-icon="close"></span></button></div><div class="dialog-body"><p>Выберите пример или добавьте товар. Заполните характеристики и описание, затем нажмите «Подготовить карточку».</p><h3>Для настоящей генерации</h3><p>По умолчанию используется локальная модель через Ollama, API-ключ не требуется. Запустите Ollama и загрузите модель, указанную в серверном файле <code>.env</code>. При необходимости можно выбрать облачный API и задать <code>OPENAI_API_KEY</code> в <code>.env</code>. Данные товара отправляются настроенной модели только по нажатию кнопки.</p><h3>Образцы и экспорт</h3><p>«Открыть готовый образец» показывает заранее подготовленную карточку исходного примера, а не ответ API. Образцы доступны без обращения к модели. JSON и Markdown скачиваются через «Экспорт».</p><h3>Перед публикацией</h3><p>Проверьте текст и недостающие поля. Пометка «данных нет» означает, что характеристику нужно уточнить, а не угадать.</p><div class="orb-credit"><canvas id="help-orb" width="64" height="64" aria-hidden="true"></canvas><div><strong>Thinking Orbs</strong><p>Индикатор на основе открытого Canvas-движка Libraries.dev, состояние working. Локальная JS-адаптация, MIT.</p><a href="https://libraries.dev/orbs" target="_blank" rel="noopener noreferrer">Libraries.dev <span data-icon="external"></span></a></div></div></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="/static/vendor/thinking-orbs.js" defer></script>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

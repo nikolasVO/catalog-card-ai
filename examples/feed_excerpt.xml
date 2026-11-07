@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<offers source="СОЮЗ-ПРИБОР YML, 2026-11-06T08:10:37+03:00" note="Excerpt of two records from the supplied snapshot, not a complete feed">
+  <offer id="54170" available="true" group_id="7879">
+                <name>ТХ01-224.Щ2.Р-RS</name>
+                <typePrefix>тахометр с RS-485</typePrefix>
+                <url>https://www.souz-pribor.ru/product/tkh01-rs/</url>
+                <categoryId>325</categoryId>
+                <vendor>ОВЕН</vendor>
+                <vendorCode>65159</vendorCode>
+                <picture>https://www.souz-pribor.ru/upload/iblock/09c/TKH01_RS_03_03_21_1.jpg</picture>
+                <price>8852</price>
+                <currencyId>RUR</currencyId>
+                <param name="Артикул">65159</param>
+                <param name="Код товара">79303</param>
+            </offer>
+  <offer id="54413" available="true" group_id="7921">
+                <name>УКТ38-Щ4.ТПП</name>
+                <typePrefix>устройство контроля температуры 8-ми канальное с аварийной сигнализацией</typePrefix>
+                <url>https://www.souz-pribor.ru/product/ukt38-shch4/</url>
+                <categoryId>322</categoryId>
+                <vendor>ОВЕН</vendor>
+                <vendorCode>06984</vendorCode>
+                <picture>https://www.souz-pribor.ru/upload/iblock/288/5duukd0wkuxp2xdu3kugypnefvclnjvf/UKT38_SHCH4.png</picture>
+                <price>23717</price>
+                <currencyId>RUR</currencyId>
+                <param name="Артикул">06984</param>
+                <param name="Код товара">79487</param>
+            </offer>
+</offers>

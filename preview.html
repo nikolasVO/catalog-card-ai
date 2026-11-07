@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fbfbfa">
+  <title>Draftly — редактор товарных карточек</title>
+  <link rel="icon" href="data:,">
+  <style>
+/* Neutral editorial workspace. No external fonts, CDN, gradients or UI kit. */
+:root{color-scheme:light;--bg:#fbfbfa;--paper:#fff;--side:#f5f5f3;--ink:#222320;--secondary:#636560;--muted:#74786f;--line:#e6e7e2;--line-strong:#d9dbd4;--hover:#f0f1ed;--soft:#f7f8f4;--warn:#8e6727;--warn-bg:#faf7ef;--radius:6px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}button,input,textarea{font:inherit}button,a,input,textarea,summary{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}button{color:inherit}a{color:inherit;text-decoration:none}button,input,textarea{border-radius:var(--radius)}button{border:0;background:none}button:focus-visible,a:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid #686b61;outline-offset:4px}input:focus,textarea:focus{outline:none;border-color:#81867a;box-shadow:0 0 0 2px #81867a12}svg{width:16px;height:16px;display:block;flex-shrink:0}canvas{display:block}button [data-icon],a [data-icon],span[data-icon]{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}[hidden]{display:none!important}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.skip-link{position:absolute;left:16px;top:-80px;z-index:90;padding:10px;background:#fff}.skip-link:focus{top:10px}.tiny-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#808775;flex-shrink:0}.muted{color:var(--muted)}
+.app-header{height:65px;border-bottom:1px solid var(--line);background:var(--paper);display:flex;align-items:center;padding:0 28px;gap:22px}.brand{display:flex;align-items:center;gap:7px;font-size:22px;font-weight:650;letter-spacing:-.9px;line-height:1}.brand-period{color:#909389}.header-divider{height:17px;width:1px;background:var(--line-strong)}.app-caption{font-size:12px;color:var(--secondary)}.header-actions{margin-left:auto;display:flex;align-items:center;gap:30px}.local-label{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--muted)}.text-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:4px 0;font-size:12px;color:var(--secondary);line-height:1.4}.text-btn:hover{color:var(--ink)}.text-btn svg{width:14px;height:14px}.help-trigger{font-size:12px;gap:8px}.help-trigger svg{width:15px;height:15px}
+.app-layout{display:grid;grid-template-columns:206px minmax(0,1fr);min-height:calc(100vh - 65px)}.sidebar{background:var(--side);border-right:1px solid var(--line);padding:30px 14px 24px;display:flex;flex-direction:column;gap:0}.sidebar-title{display:flex;align-items:center;justify-content:space-between;padding:0 10px;color:var(--muted);font-size:11px;margin-bottom:28px}.sidebar-title svg{width:14px;height:14px;opacity:.65}.sidebar-heading{display:flex;align-items:center;gap:9px;padding:0 10px;margin-bottom:13px}.sidebar-heading h2{font-size:12px;font-weight:600;margin:0}.number-badge{font-size:10px;line-height:17px;text-align:center;color:#777b71;background:#e9eae5;border-radius:4px;min-width:18px}.product-list{display:flex;flex-direction:column;gap:5px}.product-button{display:flex;align-items:center;text-align:left;gap:10px;width:100%;padding:12px 10px;border:1px solid transparent;border-radius:6px;position:relative}.product-button:hover{background:#eeefea}.product-button.selected{background:white;border-color:var(--line-strong)}.product-button>.product-icon{border:1px solid #dfe1d9;background:#fbfcf9;width:30px;height:32px;border-radius:4px;display:flex;justify-content:center;align-items:center;color:#74796b}.product-button>.product-icon svg{width:16px;height:16px}.product-name{display:flex;flex-direction:column;gap:2px;min-width:0}.product-name strong{font-size:12px;font-weight:550;white-space:nowrap}.product-name small{font-size:10px;color:var(--secondary);white-space:nowrap;max-width:112px;overflow:hidden;text-overflow:ellipsis}.product-button.selected:after{content:"";width:4px;height:4px;position:absolute;right:9px;top:16px;border-radius:50%;background:#7c8370}.new-product{display:flex;align-items:center;gap:9px;text-align:left;font-size:12px;color:var(--secondary);padding:13px 11px;margin-top:6px}.new-product svg{width:14px;height:14px}.new-product:hover{color:var(--ink);background:var(--hover)}.sidebar-note{display:flex;gap:8px;align-items:flex-start;margin:25px 10px 0;font-size:10px;color:var(--muted);line-height:1.8}.sidebar-note .tiny-dot{margin-top:7px;width:4px;height:4px;background:#b1b5a8}.sidebar-footer{margin-top:auto;padding:60px 10px 0}.sidebar-footer-title{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--secondary)}.sidebar-footer-title svg{width:12px;height:12px}.sidebar-footer p{font-size:10px;line-height:1.8;color:var(--muted);margin:8px 0 22px}.api-link{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--secondary);border-top:1px solid #dddfd7;padding-top:15px}.api-link svg{width:12px;height:12px}
+.workspace{padding:29px 34px 18px;min-width:0;max-width:1680px;width:100%;margin:auto}.page-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 26px}.breadcrumb{display:flex;gap:11px;font-size:10px;color:var(--muted);margin-bottom:9px}.breadcrumb span{color:#bec0b8}.page-heading h1{font-size:26px;line-height:1.3;letter-spacing:-.85px;font-weight:560;margin:0}.page-heading p{margin:7px 0 0;font-size:12px;color:var(--secondary)}.quiet-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line-strong);background:white;padding:9px 12px;font-size:11px;white-space:nowrap}.quiet-btn:hover{background:var(--soft);border-color:#bfc3b7}.quiet-btn svg{width:14px;height:14px}.editor-layout{display:grid;grid-template-columns:332px minmax(0,1fr);background:white;border:1px solid var(--line-strong);border-radius:8px;min-height:746px;overflow:clip}.source-pane{display:flex;flex-direction:column;min-width:0;border-right:1px solid var(--line)}.output-pane{display:flex;flex-direction:column;min-width:0;position:relative}.pane-heading{height:57px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:10px}.pane-heading h2{font-size:13px;font-weight:550;letter-spacing:-.1px;margin:0}.subtle-state{font-size:10px;color:var(--muted)}.tabs{display:flex;align-items:stretch;border-bottom:1px solid var(--line);height:40px;flex-shrink:0;gap:22px}.input-tabs{padding:0 22px}.tab{border-radius:0;position:relative;color:var(--muted);font-size:11px;padding:0;white-space:nowrap;font-weight:450}.tab:hover{color:var(--ink)}.tab.active{color:var(--ink);font-weight:550}.tab.active:after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:2px;background:#41483a}.source-content{padding:20px 22px 0}.fields-panel fieldset{padding:0;border:0;margin:0;min-width:0}.field{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;font-size:11px;font-weight:500;min-width:0}.required-dot{color:#aaa;font-weight:400}.field input,.field textarea{font-size:12px;font-weight:400;color:var(--ink);width:100%;border:1px solid var(--line-strong);background:#fff;padding:8px 10px;line-height:1.5;min-width:0}.field input{height:34px}.field textarea{resize:vertical;min-height:65px}.field input::placeholder,.field textarea::placeholder{color:#aaa}.section-label{display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:500;margin:18px 0 9px}.section-label .muted{font-weight:400;font-size:10px}.spec-rows{border:1px solid var(--line-strong);border-radius:5px;overflow:hidden}.spec-row{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.1fr) 20px;align-items:center;min-height:33px;gap:0;border-bottom:1px solid var(--line)}.spec-row:last-child{border-bottom:0}.spec-row input{border:0;border-radius:0;padding:8px 6px 8px 9px;min-width:0;width:100%;font-size:10px;background:transparent;height:33px;text-overflow:ellipsis;box-shadow:none}.spec-row input:focus{background:#f7f8f3;box-shadow:inset 0 0 0 1px #8c9382}.spec-key{color:var(--secondary)}.spec-value{color:var(--ink)}.remove-spec{display:flex;align-items:center;justify-content:center;opacity:0;color:var(--muted);padding:0;width:20px;height:26px}.remove-spec svg{width:11px;height:11px}.spec-row:hover .remove-spec,.remove-spec:focus-visible{opacity:1}.spec-actions{display:flex;justify-content:space-between;align-items:center;padding:8px 0 0;gap:8px}.spec-actions .text-btn{font-size:10px;gap:3px}.spec-actions .text-btn svg{width:12px;height:12px}.description-field{margin-top:17px;margin-bottom:13px}.description-field textarea{font-size:11px;line-height:1.65;height:89px;padding:9px 10px;color:#5b5e54}.source-details summary{display:flex;align-items:center;justify-content:space-between;color:var(--secondary);font-size:10px;cursor:pointer;list-style:none;padding:7px 0}.source-details summary::-webkit-details-marker{display:none}.source-details summary svg{width:12px;height:12px;transition:transform .15s}.source-details[open] summary svg{transform:rotate(180deg)}.source-details-body{padding:13px 0 0}.field small{font-weight:400;line-height:1.6;font-size:10px;color:var(--muted)}.source-bottom{margin-top:auto;padding:20px 22px 17px}.primary-btn{width:100%;display:flex;align-items:center;justify-content:space-between;background:#282c24;color:white;border:1px solid #282c24;height:39px;padding:0 12px;font-size:12px;font-weight:450;transition:background .15s}.primary-btn:hover:not(:disabled){background:#414939;border-color:#414939}.primary-btn svg{width:14px;height:14px}.sample-btn{border:1px solid var(--line-strong);height:35px;width:100%;font-size:11px;margin-top:8px;background:white;color:var(--secondary)}.sample-btn:hover:not(:disabled){background:var(--soft)}.privacy-note{display:flex;align-items:center;justify-content:center;gap:5px;font-size:9px;color:var(--muted);margin:11px 0 0}.privacy-note svg{width:10px;height:10px}.json-editor{width:100%;height:455px;resize:vertical;border:1px solid var(--line-strong);padding:13px;font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-size:10.5px;line-height:1.8;background:#fafbf8;tab-size:2;white-space:pre;overflow:auto}.format-json{font-size:10px;margin-top:5px}
+.output-heading{padding:0 24px}.output-title{display:flex;align-items:center;gap:10px;min-width:0}.status-badge{display:inline-flex;align-items:center;white-space:nowrap;background:var(--soft);border:1px solid var(--line);color:var(--secondary);border-radius:4px;padding:2px 6px;font-size:9px;font-weight:400}.status-badge.needs-data{background:var(--warn-bg);border-color:#e8dfcc;color:var(--warn)}.output-tools{display:flex;gap:10px;align-items:center}.tool-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:1px solid transparent;color:var(--secondary);border-radius:5px}.tool-btn:hover{background:var(--soft);border-color:var(--line)}.tool-btn svg{width:14px;height:14px}.export-wrap{position:relative}.export-btn{display:flex;align-items:center;gap:7px;border:1px solid var(--line-strong);padding:6px 8px;font-size:10px;background:white}.export-btn:hover{background:var(--soft)}.export-btn svg{width:12px;height:12px}.export-menu{position:absolute;top:calc(100% + 6px);right:0;border:1px solid var(--line-strong);background:white;box-shadow:0 6px 24px #1b24100a;padding:5px;border-radius:6px;z-index:20;min-width:220px}.export-menu button{display:flex;width:100%;align-items:center;justify-content:space-between;font-size:11px;padding:9px 10px;text-align:left}.export-menu button:hover{background:var(--soft)}.export-menu button span{font-size:10px;color:var(--muted)}.output-tabs{padding:0 25px;gap:22px}.tabs-spacer{flex:1}.code-tab{font-family:"SFMono-Regular",Consolas,monospace;font-size:10px}.result-container{position:relative;flex:1;min-height:470px;display:flex;flex-direction:column}.result{padding:29px 32px 24px;flex:1;min-width:0;outline-offset:-3px!important}.result p{font-size:12px;color:#54584f;line-height:1.9;margin:0 0 16px;white-space:pre-wrap}.result h3{font-size:19px;line-height:1.5;letter-spacing:-.42px;font-weight:500;margin:0;overflow-wrap:anywhere}.content-label{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--secondary);margin:0 0 10px;font-weight:450;gap:15px}.content-label .counter{font-family:"SFMono-Regular",Consolas,monospace;color:var(--muted);font-size:9px;white-space:nowrap}.counter.invalid{color:var(--warn)}.title-block{padding-bottom:21px;border-bottom:1px solid var(--line);margin-bottom:22px}.description-block{margin-bottom:25px}.description-block p:last-child{margin-bottom:0}.query-block{border-top:1px solid var(--line);padding-top:19px}.queries{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.query{padding:5px 8px;background:#f5f6f2;border:1px solid #eef0e8;border-radius:4px;font-size:10px;color:#63695b;line-height:1.5;overflow-wrap:anywhere;max-width:100%}.result pre{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;font-size:10.5px;line-height:1.85;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;color:#4e5548;max-height:620px;overflow:auto}.table-intro{font-size:11px!important;line-height:1.7!important;color:var(--secondary)!important;margin:0 0 22px!important}.facts-table{border-collapse:collapse;width:100%;text-align:left;table-layout:fixed}.facts-table th{color:var(--muted);font-size:9px;font-weight:450;padding:0 0 11px;border-bottom:1px solid var(--line-strong)}.facts-table td{border-bottom:1px solid var(--line);padding:11px 0;vertical-align:top;font-size:11px;line-height:1.6;overflow-wrap:anywhere}.facts-table td:first-child{color:var(--secondary);padding-right:25px}.facts-table td:last-child{color:var(--ink)}.facts-table .missing-value{color:var(--warn)!important}.manager-section+.manager-section{border-top:1px solid var(--line);padding-top:22px;margin-top:24px}.manager-section h3{font-size:15px;margin-bottom:12px}.missing-list{margin:10px 0 0;padding:0;list-style:none}.missing-list li{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:11px}.missing-list li span{color:var(--warn);white-space:nowrap}.warning-list{padding-left:16px;margin:8px 0 0;color:var(--secondary);font-size:11px;line-height:1.8}.warning-list li+li{margin-top:6px}.source-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;border-bottom:1px solid #b8beae;padding-bottom:3px;margin-top:4px;overflow-wrap:anywhere}.source-link svg{width:12px;height:12px}.review-strip{display:flex;align-items:center;gap:11px;padding:14px 0;margin:0 32px;border-top:1px solid #eae5d7;flex-shrink:0}.review-icon{color:#a38c5b}.review-icon svg{width:15px;height:15px}.review-strip>div{display:flex;flex-direction:column;gap:2px;min-width:0}.review-strip strong{font-size:10px;font-weight:500;color:#756340}.review-strip div>span{font-size:10px;color:#91866d;overflow-wrap:anywhere}.review-strip>.text-btn{margin-left:auto;white-space:nowrap;font-size:10px;color:#877753}.review-strip>.text-btn svg{width:12px;height:12px}.output-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:9px;line-height:1.5;padding:15px 24px;background:#fafbf8;border-top:1px solid var(--line);margin-top:3px}.workspace-footer{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:16px;font-size:9px;color:var(--muted)}.workspace-footer span:last-child{font-family:"SFMono-Regular",Consolas,monospace}.stale-notice{display:flex;align-items:center;gap:8px;font-size:10px;color:#897044;background:#fbf8ef;padding:9px 24px;border-bottom:1px solid #eee8dc}.stale-notice svg{width:12px;height:12px}.inline-alert,.result-error{font-size:11px;line-height:1.7;border:1px solid #e7d5d2;border-radius:5px;color:#965a52;padding:10px 12px;background:#fffaf8;margin:0 0 16px;overflow-wrap:anywhere}.result-error{margin:12px 24px 0}.inline-alert strong,.result-error strong{font-weight:550}.empty-state{min-height:390px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:35px 20px;color:var(--secondary)}.empty-state>.empty-icon{width:40px;height:40px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:#939989}.empty-state h3{font-size:16px;margin:0 0 10px;letter-spacing:-.3px}.empty-state p{font-size:12px;max-width:340px;color:var(--muted);line-height:1.8}.loading-state{display:flex;flex:1;min-height:470px;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:white;padding:50px 28px}.loading-state canvas{margin:0 auto 28px}.loading-state h3{font-size:18px;font-weight:500;letter-spacing:-.4px;margin:0 0 10px}.loading-state p{font-size:12px;line-height:1.9;color:var(--secondary);margin:0 0 28px}.loading-state .quiet-btn{font-size:11px;padding:7px 15px}.mobile-pane-tabs{display:none}.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);padding:11px 18px;border-radius:6px;background:#2b3026;color:white;font-size:12px;box-shadow:0 3px 18px #0001;max-width:calc(100vw - 32px);z-index:90;white-space:normal;text-align:center}
+dialog{border:1px solid var(--line-strong);padding:0;border-radius:10px;max-width:520px;width:calc(100% - 36px);max-height:calc(100dvh - 48px);box-shadow:0 24px 90px #0001;color:var(--ink)}dialog::backdrop{background:#20251c45;backdrop-filter:blur(2px)}.dialog-heading{display:flex;justify-content:space-between;gap:16px;padding:20px 25px;border-bottom:1px solid var(--line);align-items:center}.dialog-heading h2{font-size:17px;font-weight:500;letter-spacing:-.4px;margin:0}.dialog-body{padding:24px 26px}.dialog-body p{font-size:12px;line-height:1.85;color:var(--secondary);margin:0 0 20px}.dialog-body h3{font-size:12px;font-weight:550;margin:24px 0 8px}code{background:#f0f1eb;padding:2px 4px;border-radius:3px;font-size:.9em}.orb-credit{display:flex;gap:18px;align-items:center;margin-top:28px;border-top:1px solid var(--line);padding-top:24px}.orb-credit canvas{flex-shrink:0}.orb-credit strong{font-size:12px;font-weight:550}.orb-credit p{font-size:10px;margin:5px 0 8px}.orb-credit a{display:inline-flex;gap:5px;align-items:center;font-size:10px;color:var(--ink)}.orb-credit svg{width:12px;height:12px}
+@media(min-width:1700px){.workspace{padding-left:50px;padding-right:50px}.editor-layout{grid-template-columns:370px minmax(0,1fr)}.result{padding-left:48px;padding-right:48px}.result p{font-size:13px}.review-strip{margin-left:48px;margin-right:48px}}
+@media(max-width:1250px) and (min-width:961px){.app-layout{grid-template-columns:180px minmax(0,1fr)}.workspace{padding:24px 22px 16px}.sidebar{padding-left:9px;padding-right:9px}.product-name strong{font-size:11px}.product-name small{max-width:95px}.product-button{gap:7px;padding-left:7px}.editor-layout{grid-template-columns:290px minmax(0,1fr)}.source-content{padding:18px 17px 0}.source-bottom{padding:18px 17px 16px}.pane-heading{padding:0 17px}.result{padding:24px}.output-tabs{padding:0 20px;gap:15px}.output-tabs .tab{font-size:10px}.review-strip{margin:0 24px}.output-footer{font-size:8px}.output-title{gap:6px}.pane-heading h2{font-size:12px}.export-btn{padding:5px;gap:4px}.output-tools{gap:5px}}
+@media(max-width:960px){.app-header{height:57px;padding:0 20px;gap:15px}.header-actions{gap:0}.local-label{display:none}.app-layout{display:block;min-height:calc(100vh - 57px)}.sidebar{padding:15px 20px;display:flex;flex-direction:row;align-items:center;gap:12px;border-right:0;border-bottom:1px solid var(--line);overflow:auto}.sidebar-title,.sidebar-heading,.sidebar-note,.sidebar-footer{display:none}.product-list{display:flex;flex-direction:row;gap:7px;flex-shrink:0}.product-button{padding:9px 12px;width:190px;gap:10px}.product-button.selected:after{top:12px}.product-name small{max-width:135px}.new-product{font-size:11px;white-space:nowrap;margin:0;padding:13px 10px}.workspace{padding:24px 24px 20px;max-width:800px}.page-heading{margin-bottom:22px}.page-heading h1{font-size:25px}.mobile-pane-tabs{display:flex;gap:5px;border:1px solid var(--line);background:#f1f2ed;padding:4px;border-radius:6px;margin-bottom:14px}.mobile-pane-tabs button{flex:1;font-size:11px;height:31px;color:var(--secondary);border:1px solid transparent}.mobile-pane-tabs button.active{background:#fff;border-color:var(--line);color:var(--ink)}body[data-mobile-pane="result"] .source-pane{display:none}body[data-mobile-pane="source"] .output-pane{display:none}.editor-layout{display:block;min-height:0;border-radius:6px}.source-pane{border:0}.source-content{padding:22px}.source-bottom{padding:20px 22px}.source-pane .field input{height:39px}.source-pane .field{font-size:12px}.source-pane .field input,.source-pane .field textarea{font-size:13px}.source-pane .spec-row input{font-size:12px;height:37px}.source-pane .spec-row{min-height:37px}.source-pane .spec-actions .text-btn{font-size:11px}.source-pane .description-field textarea{height:130px}.source-pane .source-details summary{font-size:12px}.source-pane .primary-btn{height:42px}.source-pane .sample-btn{height:40px}.source-pane .privacy-note{font-size:10px}.source-pane .section-label{font-size:12px}.result{padding:25px 26px}.result p{font-size:13px;line-height:1.85}.result h3{font-size:20px}.review-strip{margin-left:26px;margin-right:26px}.output-footer{font-size:9px}.source-pane .remove-spec{opacity:.6}.json-editor{height:470px}.workspace-footer{font-size:9px}}
+@media(max-width:540px){.app-header{height:55px;padding:0 16px;gap:14px}.brand{font-size:21px;gap:5px}.app-caption{font-size:10px}.header-actions .help-trigger{font-size:0;width:28px;height:30px;gap:0}.header-actions .help-trigger svg{width:17px;height:17px}.sidebar{padding:12px 16px;gap:7px;scrollbar-width:none}.sidebar::-webkit-scrollbar{display:none}.product-list{gap:7px}.product-button{width:158px;padding:9px 10px;gap:7px}.product-button>.product-icon{width:26px;height:29px}.product-name strong{font-size:11px}.product-name small{font-size:9px;max-width:100px}.new-product{padding:10px 8px}.workspace{padding:19px 16px 18px}.breadcrumb{font-size:9px;gap:9px}.page-heading{align-items:flex-start;gap:10px;margin-bottom:18px}.page-heading h1{font-size:23px;letter-spacing:-.65px}.page-heading p{font-size:10px;margin-top:6px;max-width:250px}.page-heading .quiet-btn{font-size:0;gap:0;padding:8px;margin-top:23px}.page-heading .quiet-btn svg{width:14px;height:14px}.mobile-pane-tabs{margin-bottom:12px}.pane-heading{height:54px;padding:0 16px}.pane-heading h2{font-size:12px}.output-title{gap:7px}.status-badge{font-size:8px;padding:2px 5px}.output-tools{gap:4px}.export-btn{font-size:9px;gap:5px;padding:5px 6px}.export-btn>span:first-child{display:none}.tool-btn{width:25px;height:28px}.tool-btn svg{width:13px;height:13px}.output-tabs{padding:0 16px;gap:17px;height:39px;overflow-x:auto;scrollbar-width:none}.tabs-spacer{min-width:0;flex:0;display:none}.output-tabs .tab{font-size:10px;flex-shrink:0}.output-tabs .code-tab{font-size:9px}.output-tabs::-webkit-scrollbar{display:none}.result{padding:23px 19px 20px}.result h3{font-size:18px;line-height:1.5;letter-spacing:-.4px}.result p{font-size:12px;line-height:1.9}.content-label{font-size:10px;margin-bottom:10px}.content-label .counter{font-size:8px}.title-block{margin-bottom:20px;padding-bottom:19px}.description-block{margin-bottom:23px}.query-block{padding-top:18px}.query{font-size:9px;padding:5px 7px}.review-strip{margin:0 19px;align-items:flex-start;gap:8px;padding:13px 0}.review-icon{margin-top:2px}.review-strip strong{font-size:9px}.review-strip div>span{font-size:9px}.review-strip>.text-btn{font-size:0;gap:0;margin-top:2px;min-width:22px;height:22px}.review-strip>.text-btn svg{width:15px;height:15px}.output-footer{font-size:8px;padding:12px 16px;flex-wrap:wrap;gap:4px}.workspace-footer{font-size:8px;line-height:1.7;gap:16px}.workspace-footer span:first-child{max-width:230px}.workspace-footer span:last-child{white-space:nowrap}.facts-table td{font-size:10px;padding:10px 0}.facts-table td:first-child{padding-right:16px}.facts-table th{font-size:9px}.table-intro{font-size:10px!important}.manager-section h3{font-size:14px}.missing-list li{font-size:10px}.warning-list{font-size:10px}.source-content{padding:18px 17px 0}.source-bottom{padding:20px 17px 17px}.field input,.field textarea{font-size:16px!important}.spec-row input{font-size:12px!important}.source-pane .description-field textarea{font-size:12px!important}.source-pane .field{font-size:11px}.source-pane .spec-actions .text-btn{font-size:10px}.source-pane .section-label{font-size:11px}.source-pane .source-details summary{font-size:10px}.result-error{margin:12px 16px 0;font-size:10px}.stale-notice{padding:10px 16px;font-size:10px}.loading-state{min-height:445px;padding:30px 18px}.loading-state h3{font-size:17px}.loading-state p{font-size:11px}.loading-state canvas{margin-bottom:24px}.dialog-body{padding:22px}.dialog-heading{padding:17px 22px}.dialog-heading h2{font-size:16px}.orb-credit{gap:14px}.toast{font-size:11px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+.mobile-copy{display:none}@media(max-width:960px){.desktop-copy{display:none}.mobile-copy{display:inline}}
+
+</style>
+</head>
+<body data-mobile-pane="result">
+  <a class="skip-link" href="#workspace">К редактору</a>
+  <header class="app-header">
+    <a class="brand" href="#" aria-label="Draftly — главная"><canvas id="brand-orb" width="32" height="32" aria-hidden="true"></canvas><span>Draftly<span class="brand-period">.</span></span></a>
+    <span class="header-divider"></span><span class="app-caption">Товарный контент</span>
+    <div class="header-actions"><span class="local-label"><span class="tiny-dot"></span>Автономный предпросмотр</span><button class="text-btn help-trigger" type="button"><span data-icon="help"></span><span>Как это работает</span></button></div>
+  </header>
+  <div class="app-layout">
+    <aside class="sidebar" aria-label="Выбор товара">
+      <div class="sidebar-title"><span>Рабочая область</span><span data-icon="folder"></span></div>
+      <div class="sidebar-heading"><h2>Товары</h2><span class="number-badge" id="product-count">2</span></div>
+      <nav id="product-list" class="product-list" aria-label="Примеры товаров"></nav>
+      <button type="button" class="new-product" id="new-product"><span data-icon="plus"></span>Новый товар</button>
+      <div class="sidebar-note"><span class="tiny-dot"></span><span>Примеры из каталога<br>«СОЮЗ-ПРИБОР»</span></div>
+      <div class="sidebar-footer"><div class="sidebar-footer-title"><span data-icon="file"></span><span>Черновик, не публикация</span></div><p>Готовую карточку проверьте<br>и передайте в каталог.</p><a href="/docs" target="_blank" rel="noopener" class="api-link">Документация API <span data-icon="external"></span></a></div>
+    </aside>
+    <main class="workspace" id="workspace">
+      <div class="page-heading"><div><div class="breadcrumb">Каталог <span>/</span> Подготовка карточки</div><h1>Редактор карточки</h1><p><span class="desktop-copy">Исходные данные слева. Готовый текст — справа.</span><span class="mobile-copy">Данные и результат — в отдельных вкладках.</span></p></div><button class="quiet-btn" id="import-json" type="button"><span data-icon="upload"></span>Импорт JSON</button><input type="file" id="file-input" accept=".json,application/json" hidden></div>
+      <div class="mobile-pane-tabs" role="group" aria-label="Панель редактора"><button type="button" data-mobile-view="source">Исходные данные</button><button type="button" class="active" data-mobile-view="result">Карточка товара</button></div>
+      <div class="editor-layout">
+        <section class="source-pane" aria-label="Исходные данные">
+          <div class="pane-heading"><h2>Исходные данные</h2><span id="input-state" class="subtle-state">Пример</span></div>
+          <div class="input-tabs tabs" role="tablist" aria-label="Способ ввода"><button type="button" id="input-tab-fields" class="tab active" role="tab" aria-selected="true" aria-controls="fields-panel" data-input-tab="fields">Поля</button><button type="button" id="input-tab-json" class="tab" role="tab" aria-selected="false" aria-controls="raw-panel" data-input-tab="json" tabindex="-1">JSON</button></div>
+          <div class="source-content">
+            <div id="input-error" class="inline-alert" role="alert" hidden></div>
+            <form id="fields-panel" class="fields-panel" role="tabpanel" aria-labelledby="input-tab-fields" novalidate>
+              <fieldset id="source-fields">
+                <label class="field"><span>Название товара <span class="required-dot">*</span></span><input id="field-name" name="name" autocomplete="off" maxlength="300" placeholder="Например, манометр DM 02"></label>
+                <label class="field"><span>Производитель</span><input id="field-manufacturer" name="manufacturer" autocomplete="off" placeholder="Название производителя"></label>
+                <label class="field"><span>Тип прибора</span><input id="field-type" name="product_type" autocomplete="off" placeholder="Например, манометр"></label>
+                <div class="section-label"><span>Характеристики</span><span class="muted" id="spec-count">—</span></div>
+                <div id="spec-rows" class="spec-rows"></div>
+                <div class="spec-actions"><button type="button" class="text-btn" id="toggle-specs">Все характеристики <span data-icon="chevron-down"></span></button><button class="text-btn" id="add-spec" type="button" title="Добавить характеристику"><span data-icon="plus"></span>Добавить</button></div>
+                <label class="field description-field"><span>Описание из источника</span><textarea id="field-description" name="description" rows="4" placeholder="Описание товара или фрагмент технического паспорта"></textarea></label>
+                <details class="source-details"><summary>Источник и недостающие поля <span data-icon="chevron-down"></span></summary><div class="source-details-body"><label class="field"><span>Ссылка на источник</span><input id="field-source" type="url" name="source_url" placeholder="https://…"></label><label class="field"><span>Какие характеристики проверить</span><textarea id="field-expected" rows="2" placeholder="По одному названию на строке"></textarea><small>Без значения они будут отмечены «данных нет».</small></label></div></details>
+              </fieldset>
+            </form>
+            <div id="raw-panel" role="tabpanel" aria-labelledby="input-tab-json" hidden><label class="sr-only" for="json-input">Исходный JSON товара</label><textarea id="json-input" class="json-editor" spellcheck="false"></textarea><button class="text-btn format-json" id="format-json" type="button"><span data-icon="code"></span>Форматировать JSON</button></div>
+          </div>
+          <div class="source-bottom"><button class="primary-btn" id="generate" type="button"><span>Подготовить карточку</span><span data-icon="arrow-right"></span></button><button class="sample-btn" id="show-demo" type="button">Открыть готовый образец</button><p class="privacy-note"><span data-icon="lock"></span>По умолчанию — Ollama без API-ключа</p></div>
+        </section>
+        <section class="output-pane" aria-label="Результат">
+          <div class="pane-heading output-heading"><div class="output-title"><h2>Карточка товара</h2><span class="status-badge" id="status">Образец</span></div><div class="output-tools"><button type="button" class="tool-btn" id="copy" title="Скопировать карточку" aria-label="Скопировать карточку"><span data-icon="copy"></span></button><div class="export-wrap"><button type="button" class="export-btn" id="export-menu-toggle" aria-expanded="false" aria-controls="export-menu"><span data-icon="download"></span><span>Экспорт</span><span data-icon="chevron-down"></span></button><div class="export-menu" id="export-menu" hidden><button type="button" data-export="json">Скачать JSON <span>.json</span></button><button type="button" data-export="markdown">Скачать Markdown <span>.md</span></button></div></div></div></div>
+          <div class="output-tabs tabs" role="tablist" aria-label="Раздел карточки">
+            <button type="button" id="tab-description" class="tab active" role="tab" aria-selected="true" aria-controls="result" data-tab="description">Описание</button>
+            <button type="button" id="tab-specs" class="tab" role="tab" aria-selected="false" aria-controls="result" data-tab="specs" tabindex="-1">Характеристики</button>
+            <button type="button" id="tab-manager" class="tab" role="tab" aria-selected="false" aria-controls="result" data-tab="manager" tabindex="-1">Для менеджера</button>
+            <span class="tabs-spacer"></span><button type="button" id="tab-json" class="tab code-tab" role="tab" aria-selected="false" aria-controls="result" data-tab="json" tabindex="-1">JSON</button><button type="button" id="tab-markdown" class="tab code-tab" role="tab" aria-selected="false" aria-controls="result" data-tab="markdown" tabindex="-1">MD</button>
+          </div>
+          <div id="stale-notice" class="stale-notice" hidden><span data-icon="info"></span><span>Исходные данные изменены. Подготовьте карточку заново.</span></div>
+          <div id="result-error" class="result-error" role="alert" hidden></div>
+          <div class="result-container">
+            <div id="result" class="result" role="tabpanel" aria-labelledby="tab-description" tabindex="0"></div>
+            <div id="loading" class="loading-state" role="status" hidden><canvas id="loading-orb" width="64" height="64" aria-hidden="true"></canvas><h3>Подготавливаем карточку</h3><p>Формируем текст на основе ваших данных.<br>Технические значения сохраняем из источника.</p><button class="quiet-btn" id="cancel" type="button">Отменить</button></div>
+          </div>
+          <div class="review-strip" id="review-strip" hidden><span class="review-icon" data-icon="info"></span><div><strong id="review-title">Проверьте перед публикацией</strong><span id="review-text"></span></div><button type="button" class="text-btn" id="review-open">Посмотреть <span data-icon="arrow-right"></span></button></div>
+          <footer class="output-footer"><span id="output-origin">Готовый пример · без вызова API</span><span>Проверка редактором обязательна</span></footer>
+        </section>
+      </div>
+      <footer class="workspace-footer"><span>Факты — из источника. Формулировки — от модели.</span><span>Draftly / 01</span></footer>
+    </main>
+  </div>
+  <dialog id="help-dialog" aria-labelledby="help-title"><div class="dialog-heading"><h2 id="help-title">Как работать с карточкой</h2><button class="tool-btn" id="close-help" type="button" aria-label="Закрыть инструкцию"><span data-icon="close"></span></button></div><div class="dialog-body"><p>Выберите пример или добавьте товар. Заполните характеристики и описание, затем нажмите «Подготовить карточку».</p><h3>Для настоящей генерации</h3><p>По умолчанию используется локальная модель через Ollama, API-ключ не требуется. Запустите Ollama и загрузите модель, указанную в серверном файле <code>.env</code>. При необходимости можно выбрать облачный API и задать <code>OPENAI_API_KEY</code> в <code>.env</code>. Данные товара отправляются настроенной модели только по нажатию кнопки.</p><h3>Образцы и экспорт</h3><p>«Открыть готовый образец» показывает заранее подготовленную карточку исходного примера, а не ответ API. Образцы доступны без обращения к модели. JSON и Markdown скачиваются через «Экспорт».</p><h3>Перед публикацией</h3><p>Проверьте текст и недостающие поля. Пометка «данных нет» означает, что характеристику нужно уточнить, а не угадать.</p><div class="orb-credit"><canvas id="help-orb" width="64" height="64" aria-hidden="true"></canvas><div><strong>Thinking Orbs</strong><p>Индикатор на основе открытого Canvas-движка Libraries.dev, состояние working. Локальная JS-адаптация, MIT.</p><a href="https://libraries.dev/orbs" target="_blank" rel="noopener noreferrer">Libraries.dev <span data-icon="external"></span></a></div></div></div></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script>
+/*
+ * Thinking Orbs — working/orbits state, adapted to plain JavaScript.
+ * Copyright (c) 2026 Jakub Antalik. MIT License, see licenses/thinking-orbs.txt.
+ * Source: Jakubantalik/Libraries.dev, packages/thinking-orbs/src/
+ * Engine math and the 20/32/64 working presets are from upstream.
+ * This local adapter adds canvas lifecycle, visibility and reduced-motion handling.
+ * Not the React package; no framework or CDN is required.
+ */
+(() => {
+  'use strict';
+  const presets = {
+    64: { speed: 1.885, count: 1, size: 1 },
+    32: { speed: 2.9072, count: 0.4251, size: 1.6849 },
+    20: { speed: 3.9, count: 0.238, size: 2.4 }
+  };
+  function hashD(a, b) {
+    const h = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
+    return h - Math.floor(h);
+  }
+  function makeProj(yaw, tilt, cx, cy, scale) {
+    const st = Math.sin(tilt), ct = Math.cos(tilt);
+    const sy = Math.sin(yaw), cyw = Math.cos(yaw);
+    return (x, y, z) => {
+      const x1 = x * cyw + z * sy;
+      const z1 = -x * sy + z * cyw;
+      const y1 = y * ct - z1 * st;
+      const z2 = y * st + z1 * ct;
+      return [cx + x1 * scale, cy - y1 * scale, z2];
+    };
+  }
+  function frameOrbits(size, t, o) {
+    const cx = size / 2, cy = size / 2;
+    const R = (size / 2) * 0.82;
+    const pt = makeProj(t * 0.12, 0.3, cx, cy, 1);
+    const rs = (size / 300) ** (o.rsPow ?? 0.6);
+    const dots = [];
+    const orbitN = o.orbitN ?? 12, ghostN = o.ghostN ?? 40, particles = o.particles ?? 3;
+    for (let orb = 0; orb < orbitN; orb++) {
+      const h1 = hashD(orb, 1.7), h2 = hashD(orb, 5.2), h3 = hashD(orb, 8.9);
+      const ro = R * (0.45 + 0.52 * h1);
+      const th = h1 * 2 * Math.PI, phi = Math.acos(2 * h2 - 1);
+      const nx = Math.sin(phi) * Math.cos(th), ny = Math.cos(phi), nz = Math.sin(phi) * Math.sin(th);
+      let ux = -ny, uy = nx;
+      const uz = 0;
+      const ul = Math.max(1e-6, Math.sqrt(ux * ux + uy * uy));
+      ux /= ul; uy /= ul;
+      const vx = ny * uz - nz * uy, vy = nz * ux - nx * uz, vz = nx * uy - ny * ux;
+      const speed = (0.25 + 0.55 * h3) * (h3 > 0.5 ? 1 : -1);
+      for (let k = 0; k < ghostN; k++) {
+        const a = (k / ghostN) * 2 * Math.PI;
+        const [px, py, z] = pt(
+          (ux * Math.cos(a) + vx * Math.sin(a)) * ro,
+          (uy * Math.cos(a) + vy * Math.sin(a)) * ro,
+          (uz * Math.cos(a) + vz * Math.sin(a)) * ro
+        );
+        const depth = (z / ro + 1) / 2;
+        dots.push({ x: px, y: py, z, r: (o.ghostR ?? 0.9) * rs, white: 0.72, a: (o.ghostA ?? 0.5) * (0.4 + 0.6 * depth) });
+      }
+      for (let m = 0; m < particles; m++) {
+        const a = t * speed + (m / particles) * 2 * Math.PI + h2 * 6;
+        const [px, py, z] = pt(
+          (ux * Math.cos(a) + vx * Math.sin(a)) * ro,
+          (uy * Math.cos(a) + vy * Math.sin(a)) * ro,
+          (uz * Math.cos(a) + vz * Math.sin(a)) * ro
+        );
+        const depth = (z / ro + 1) / 2;
+        dots.push({ x: px, y: py, z, r: ((o.partR ?? 1.2) + (o.partRDepth ?? 1.6) * depth) * rs, white: 0.3 - 0.22 * depth });
+      }
+    }
+    const visible = dots.filter(d => (d.a ?? 1) >= 0.02);
+    for (const d of visible) d.r = Math.max(o.rMin ?? 0.3, d.r);
+    return visible.sort((a, b) => a.z - b.z);
+  }
+  function mount(canvas, { size = 64, paused = false, speed = 1 } = {}) {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return { setPaused() {}, destroy() {} };
+    const preset = presets[size] || presets[64];
+    const opts = {
+      orbitN: Math.max(1, Math.round(12 * preset.count)),
+      ghostN: Math.max(1, Math.round(40 * preset.count)),
+      ghostR: 0.9 * preset.size, ghostA: 0.5, particles: 3,
+      partR: 1.2 * preset.size, partRDepth: 1.6 * preset.size, rsPow: 0.6, rMin: 0.3
+    };
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = size * ratio; canvas.height = size * ratio;
+    canvas.style.width = size + 'px'; canvas.style.height = size + 'px';
+    ctx.scale(ratio, ratio);
+    const media = matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0, t = 0.8, previous = null, disposed = false;
+    function draw() {
+      ctx.clearRect(0, 0, size, size);
+      for (const d of frameOrbits(size, t, opts)) {
+        const w = Math.min(1, Math.max(0, d.white));
+        const g = Math.round(w * 255);
+        ctx.fillStyle = `rgba(${g},${g},${g},${d.a ?? 1})`;
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    function tick(now) {
+      if (disposed || paused || media.matches || document.hidden) return;
+      if (previous !== null) t += Math.min((now - previous) / 1000, 0.05) * preset.speed * speed;
+      previous = now; draw(); frame = requestAnimationFrame(tick);
+    }
+    function sync() {
+      cancelAnimationFrame(frame); previous = null; draw();
+      if (!disposed && !paused && !media.matches && !document.hidden) frame = requestAnimationFrame(tick);
+    }
+    document.addEventListener('visibilitychange', sync);
+    media.addEventListener('change', sync);
+    sync();
+    return {
+      setPaused(value) { paused = value; sync(); },
+      destroy() { disposed = true; cancelAnimationFrame(frame); document.removeEventListener('visibilitychange', sync); media.removeEventListener('change', sync); }
+    };
+  }
+  window.ThinkingOrbs = { mount };
+})();
+
+</script>
+  <script>window.DRAFTLY_PREVIEW = {"products": [{"name": "ТХ01-224.Щ2.Р-RS", "manufacturer": "ОВЕН", "product_type": "тахометр с RS-485", "source_id": "54170", "source_url": "https://www.souz-pribor.ru/product/tkh01-rs/", "specs": {"Назначение": "измерение частоты вращения и времени наработки", "Диапазон частоты вращения": "150–150 000 об/мин", "Частота входного сигнала": "2,5–2500 Гц", "Входные датчики": "NPN/PNP с открытым коллектором, сухой контакт", "Питание": "переменное 90–264 В или постоянное 20–34 В", "Интерфейс": "RS-485; Modbus RTU/ASCII", "Выходное устройство": "электромагнитное реле, 8 А при 220 В, 50 Гц и cosφ \u003e 0,4", "Корпус": "щитовой Щ2", "Температура эксплуатации": "−20…+70 °C"}, "expected_specs": ["Класс точности", "Метрологическая погрешность", "Межповерочный интервал"], "description": "Тахометр ОВЕН ТХ01-RS предназначен для измерения частоты вращения вала, линейной скорости перемещения конвейера и времени наработки агрегатов. Модификация ТХ01-224.Щ2.Р-RS снабжена интерфейсом RS-485 с протоколами Modbus RTU и ASCII, щитовым корпусом Щ2 и электромагнитным реле. Может работать в режиме тахометра или счетчика времени наработки. Поддерживает датчики с выходом NPN/PNP и сухой контакт. В актуальной таблице производителя указаны диапазон 150–150 000 об/мин и частота входного сигнала 2,5–2500 Гц. Метрологическую погрешность и межповерочный интервал нужно подтвердить для поставляемого исполнения: опубликованные источники содержат расхождения."}, {"name": "УКТ38-Щ4.ТПП", "manufacturer": "ОВЕН", "product_type": "многоканальный измеритель и сигнализатор температуры", "source_id": "54413", "source_url": "https://www.souz-pribor.ru/product/ukt38-shch4/", "specs": {"Назначение": "контроль температуры по нескольким каналам с аварийной сигнализацией", "Количество каналов": "2–8 (настраиваемое)", "Тип датчиков": "термопары ТПП(S) и ТПП(R)", "Диапазон температур для ТПП(S)/ТПП(R)": "0…+1700 °C", "Цикл опроса 8 датчиков": "не более 2,2 с", "Питание": "переменное 90–245 В; 47–63 Гц", "Потребляемая мощность": "не более 6 ВА", "Выходные устройства": "2 электромагнитных реле", "Коммутируемая нагрузка": "4 А при 230 В, 50 Гц и cosφ ≥ 0,4", "Корпус": "щитовой Щ4, 96×96×145 мм", "Защита передней панели": "IP54"}, "expected_specs": ["Класс точности", "Интерфейс связи"], "description": "ОВЕН УКТ38-Щ4.ТПП — многоканальное устройство для измерения и контроля температуры с аварийной сигнализацией. Модификация ТПП работает с термопарами ТПП(S) и ТПП(R) в диапазоне 0…+1700 °C. Прибор рассчитан на контроль от 2 до 8 каналов, сигнализирует о выходе показаний за уставки и об аварии датчика. Имеются два релейных выхода и цифровая индикация измеряемого значения и уставки. Используется для контроля температур в нескольких зонах, в том числе в промышленных печах."}], "cards": {"tachometer": {"status": "draft", "product_name": "ТХ01-224.Щ2.Р-RS", "manufacturer": "ОВЕН", "seo_title": "Тахометр ОВЕН ТХ01-224.Щ2.Р-RS с RS-485 для контроля вращения", "seo_description": "ОВЕН ТХ01-224.Щ2.Р-RS — тахометр для измерения частоты вращения вала и учёта времени наработки оборудования. Он помогает получить измеряемый показатель непосредственно на приборе и передать сведения в систему контроля. В актуальной таблице производителя указаны диапазон 150–150 000 об/мин и частота входного сигнала 2,5–2500 Гц.\n\nПрибор поддерживает подключение датчиков NPN/PNP с открытым коллектором и устройств с выходом «сухой контакт». Интерфейс RS-485 использует протоколы Modbus RTU/ASCII для передачи измеренных данных. В данной модификации предусмотрено электромагнитное реле: 8 А при 220 В, 50 Гц и cosφ \u003e 0,4. Исполнение корпуса — щитовое Щ2. Питание допускается от переменного напряжения 90–264 В или постоянного 20–34 В.\n\nТХ01-224.Щ2.Р-RS можно рассматривать для наблюдения за вращающимися механизмами и учёта наработки производственного оборудования. При подборе нужно сопоставить датчики, питание и выход с требованиями объекта. Метрологическую погрешность и межповерочный интервал необходимо подтвердить по паспорту поставляемого исполнения: опубликованные источники содержат расхождения.", "key_characteristics": [{"name": "Название", "value": "ТХ01-224.Щ2.Р-RS", "verified": true}, {"name": "Производитель", "value": "ОВЕН", "verified": true}, {"name": "Назначение", "value": "измерение частоты вращения и времени наработки", "verified": true}, {"name": "Диапазон частоты вращения", "value": "150–150 000 об/мин", "verified": true}, {"name": "Частота входного сигнала", "value": "2,5–2500 Гц", "verified": true}, {"name": "Входные датчики", "value": "NPN/PNP с открытым коллектором, сухой контакт", "verified": true}, {"name": "Питание", "value": "переменное 90–264 В или постоянное 20–34 В", "verified": true}, {"name": "Интерфейс", "value": "RS-485; Modbus RTU/ASCII", "verified": true}, {"name": "Выходное устройство", "value": "электромагнитное реле, 8 А при 220 В, 50 Гц и cosφ \u003e 0,4", "verified": true}, {"name": "Корпус", "value": "щитовой Щ2", "verified": true}, {"name": "Температура эксплуатации", "value": "−20…+70 °C", "verified": true}, {"name": "Класс точности", "value": "данных нет", "verified": false}, {"name": "Метрологическая погрешность", "value": "данных нет", "verified": false}, {"name": "Межповерочный интервал", "value": "данных нет", "verified": false}], "search_queries": ["тахометр ОВЕН ТХ01-224.Щ2.Р-RS", "купить тахометр ТХ01 RS-485", "тахометр с Modbus RTU ОВЕН", "ТХ01-224 щитовой тахометр"], "commercial_block": "Для служб эксплуатации, инженеров АСУ ТП и интеграторов, которым нужен контроль частоты вращения или учёт наработки. Подходит для проектов, где требуется передача измеренных данных по RS-485; параметры подключения необходимо сверить с датчиками и схемой объекта.", "missing_fields": ["Класс точности", "Метрологическая погрешность", "Межповерочный интервал"], "warnings": ["Часть параметров отсутствует в источнике; требуется уточнение перед публикацией.", "Редакторский образец; реальный вызов LLM не выполнялся. Метрологические сведения требуют сверки с паспортом поставляемого исполнения."], "source_url": "https://www.souz-pribor.ru/product/tkh01-rs/", "source_id": "54170", "requires_editor_review": true}, "temperature-monitor": {"status": "draft", "product_name": "УКТ38-Щ4.ТПП", "manufacturer": "ОВЕН", "seo_title": "ОВЕН УКТ38-Щ4.ТПП — контроль температуры по 8 каналам", "seo_description": "ОВЕН УКТ38-Щ4.ТПП — многоканальный прибор для измерения температуры и аварийной сигнализации. Он предназначен для задач, где нужно наблюдать за температурой сразу в нескольких точках и получать сигнал при выходе показаний за заданные пределы. Количество контролируемых каналов настраивается в диапазоне 2–8. Для модификации ТПП предусмотрено подключение термопар ТПП(S) и ТПП(R) с диапазоном измерения 0…+1700 °C.\n\nЦифровая индикация служит для просмотра измеренного значения и заданных параметров контроля. При выходе показаний за пределы или неисправности датчика используются функции аварийной сигнализации. Предусмотрены 2 электромагнитных реле; допустимая нагрузка контактов — 4 А при 230 В, 50 Гц и cosφ ≥ 0,4. Цикл опроса 8 датчиков составляет не более 2,2 с.\n\nУКТ38-Щ4.ТПП выполнен в щитовом корпусе Щ4 размером 96×96×145 мм; степень защиты со стороны передней панели — IP54. Прибор можно рассматривать для контроля температуры в многозонных установках, в том числе печах. При подборе нужно проверить типы термопар и требования к сигнализации. Класс точности и интерфейс связи требуют уточнения по документации.", "key_characteristics": [{"name": "Название", "value": "УКТ38-Щ4.ТПП", "verified": true}, {"name": "Производитель", "value": "ОВЕН", "verified": true}, {"name": "Назначение", "value": "контроль температуры по нескольким каналам с аварийной сигнализацией", "verified": true}, {"name": "Количество каналов", "value": "2–8 (настраиваемое)", "verified": true}, {"name": "Тип датчиков", "value": "термопары ТПП(S) и ТПП(R)", "verified": true}, {"name": "Диапазон температур для ТПП(S)/ТПП(R)", "value": "0…+1700 °C", "verified": true}, {"name": "Цикл опроса 8 датчиков", "value": "не более 2,2 с", "verified": true}, {"name": "Питание", "value": "переменное 90–245 В; 47–63 Гц", "verified": true}, {"name": "Потребляемая мощность", "value": "не более 6 ВА", "verified": true}, {"name": "Выходные устройства", "value": "2 электромагнитных реле", "verified": true}, {"name": "Коммутируемая нагрузка", "value": "4 А при 230 В, 50 Гц и cosφ ≥ 0,4", "verified": true}, {"name": "Корпус", "value": "щитовой Щ4, 96×96×145 мм", "verified": true}, {"name": "Защита передней панели", "value": "IP54", "verified": true}, {"name": "Класс точности", "value": "данных нет", "verified": false}, {"name": "Интерфейс связи", "value": "данных нет", "verified": false}], "search_queries": ["ОВЕН УКТ38-Щ4.ТПП купить", "УКТ38 ТПП контроль температуры", "8 канальный измеритель температуры ОВЕН", "аварийный сигнализатор температуры УКТ38"], "commercial_block": "Для инженеров эксплуатации и автоматизации, которым нужен контроль температуры по нескольким точкам с аварийной сигнализацией. Прибор применим для многозонных установок при использовании указанных термопар; возможность интеграции следует уточнять отдельно.", "missing_fields": ["Класс точности", "Интерфейс связи"], "warnings": ["Часть параметров отсутствует в источнике; требуется уточнение перед публикацией.", "Редакторский образец; реальный вызов LLM не выполнялся. Условия релейной нагрузки приведены по руководству производителя."], "source_url": "https://www.souz-pribor.ru/product/ukt38-shch4/", "source_id": "54413", "requires_editor_review": true}}};</script>
+<script>
+/* Draftly workspace. All product/model strings are escaped; no HTML from data is executed. */
+(() => {
+  'use strict';
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const icons = {
+    folder: '<path d="M3 5h5l2 2h11v12H3z"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.4 9a2.7 2.7 0 0 1 5.2 1c0 2-2.6 2-2.6 4m0 3v.01"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    file: '<path d="M14 3H5v18h14V8z"/><path d="M14 3v5h5M8 12h8M8 16h6"/>',
+    external: '<path d="M14 3h7v7M21 3l-11 11"/><path d="M10 5H4v15h15v-6"/>',
+    upload: '<path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/>',
+    download: '<path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/>',
+    copy: '<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',
+    'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+    'arrow-right': '<path d="M4 12h16m-6-6 6 6-6 6"/>',
+    lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4M12 14v3"/>',
+    code: '<path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.01"/>',
+    close: '<path d="m6 6 12 12M6 18 18 6"/>',
+    gauge: '<path d="M4 17a9 9 0 1 1 16 0"/><path d="m12 12 4-5M7 17h10M12 4v1M5 8l1 1M19 8l-1 1"/><circle cx="12" cy="12" r="1"/>',
+    thermometer: '<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0Z"/><path d="M12 9v8M17 5h3M17 9h2"/>'
+  };
+  function icon(name) {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.file}</svg>`;
+  }
+  function hydrateIcons(root = document) {
+    $$('[data-icon]', root).forEach(el => { el.innerHTML = icon(el.dataset.icon); });
+  }
+  function esc(value) {
+    return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function urlSafe(value) {
+    try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : ''; }
+    catch { return ''; }
+  }
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const state = {
+    examples: [], selected: 0, inputTab: 'fields', outputTab: 'description',
+    raw: '', base: {}, current: null, kind: 'sample', snapshot: '', busy: false,
+    expandedSpecs: false, controller: null, requestId: 0, demoVersion: 0
+  };
+  const slugs = ['tachometer', 'temperature-monitor'];
+  let toastTimer;
+  const motion = {};
+  function showToast(text) {
+    clearTimeout(toastTimer);
+    $('#toast').textContent = text; $('#toast').hidden = false;
+    toastTimer = setTimeout(() => { $('#toast').hidden = true; }, 3200);
+  }
+  function showInputError(text = '') {
+    $('#input-error').textContent = text;
+    $('#input-error').hidden = !text;
+  }
+  function showResultError(text = '') {
+    $('#result-error').textContent = text;
+    $('#result-error').hidden = !text;
+  }
+  function mobilePane(view) {
+    document.body.dataset.mobilePane = view;
+    $$('[data-mobile-view]').forEach(el => {
+      el.classList.toggle('active', el.dataset.mobileView === view);
+      el.setAttribute('aria-pressed', String(el.dataset.mobileView === view));
+    });
+  }
+  function fingerprint(value) {
+    const canonical = obj => Array.isArray(obj) ? obj.map(canonical) :
+      obj && typeof obj === 'object' ? Object.fromEntries(Object.keys(obj).sort().map(k => [k, canonical(obj[k])])) : obj;
+    return JSON.stringify(canonical(value));
+  }
+  function inputObject(raw) {
+    let obj;
+    try { obj = JSON.parse(raw); }
+    catch { throw new Error('Некорректный JSON. Проверьте кавычки, запятые и закрывающие скобки.'); }
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) throw new Error('Нужен один JSON-объект с данными товара, не массив.');
+    if (obj.specs != null && (typeof obj.specs !== 'object' || Array.isArray(obj.specs))) throw new Error('Поле specs должно быть объектом: название характеристики и её значение.');
+    if (obj.expected_specs != null && (!Array.isArray(obj.expected_specs) || obj.expected_specs.some(x => typeof x !== 'string'))) throw new Error('expected_specs должен содержать массив названий характеристик.');
+    for (const k of ['name', 'manufacturer', 'product_type', 'description', 'source_url']) {
+      if (obj[k] != null && typeof obj[k] !== 'string') throw new Error(`Поле ${k} должно быть строкой.`);
+    }
+    for (const [key, val] of Object.entries(obj.specs || {})) {
+      if (val !== null && !['string', 'number', 'boolean'].includes(typeof val)) throw new Error(`Характеристика «${key}» должна содержать строку, число или пустое значение.`);
+    }
+    return obj;
+  }
+  function renderProducts() {
+    $('#product-count').textContent = state.examples.length;
+    $('#product-list').innerHTML = state.examples.map((product, i) => `
+      <button type="button" class="product-button ${state.selected === i ? 'selected' : ''}" data-product="${i}" aria-pressed="${state.selected === i}" ${state.busy ? 'disabled' : ''}>
+        <span class="product-icon">${icon(i === 0 ? 'gauge' : 'thermometer')}</span>
+        <span class="product-name"><strong>${i === 0 ? 'ОВЕН ТХ01' : 'ОВЕН УКТ38'}</strong><small>${i === 0 ? 'Тахометр' : 'Контроль температуры'}</small></span>
+      </button>`).join('');
+  }
+  function specRow(key, value, index) {
+    return `<div class="spec-row" data-index="${index}" ${!state.expandedSpecs && index >= 4 ? 'hidden' : ''}>
+      <input class="spec-key" value="${esc(key)}" title="${esc(key)}" aria-label="Название характеристики ${index + 1}" placeholder="Параметр" spellcheck="false">
+      <input class="spec-value" value="${esc(value)}" title="${esc(value)}" aria-label="Значение характеристики ${index + 1}" placeholder="данных нет" spellcheck="false">
+      <button type="button" class="remove-spec" aria-label="Удалить характеристику ${index + 1}" title="Удалить характеристику">${icon('close')}</button>
+    </div>`;
+  }
+  function updateSpecVisibility() {
+    const rows = $$('.spec-row');
+    rows.forEach((row, i) => { row.hidden = !state.expandedSpecs && i >= 4; });
+    $('#spec-count').textContent = `${rows.length} параметров`;
+    $('#toggle-specs').hidden = rows.length <= 4;
+    $('#toggle-specs').innerHTML = (state.expandedSpecs ? 'Свернуть' : `Все характеристики (${rows.length})`) + icon('chevron-down');
+    $('#toggle-specs').setAttribute('aria-expanded', String(state.expandedSpecs));
+  }
+  function populateFields(product) {
+    state.base = clone(product);
+    $('#field-name').value = product.name ?? '';
+    $('#field-manufacturer').value = product.manufacturer ?? '';
+    $('#field-type').value = product.product_type ?? '';
+    $('#field-description').value = product.description ?? '';
+    $('#field-source').value = product.source_url ?? '';
+    $('#field-expected').value = (product.expected_specs || []).join('\n');
+    $('#spec-rows').innerHTML = Object.entries(product.specs || {}).map(([key, value], i) => specRow(key, value, i)).join('');
+    updateSpecVisibility();
+  }
+  function collectFields() {
+    const product = clone(state.base);
+    product.name = $('#field-name').value;
+    for (const [key, id] of [['manufacturer', 'field-manufacturer'], ['product_type', 'field-type'], ['description', 'field-description']]) product[key] = $('#' + id).value;
+    const source = $('#field-source').value.trim();
+    if (source) product.source_url = source; else delete product.source_url;
+    const specs = Object.create(null);
+    for (const row of $$('.spec-row')) {
+      const key = $('.spec-key', row).value.trim(), value = $('.spec-value', row).value.trim();
+      if (!key && value) throw new Error('Укажите название для характеристики со значением «' + value + '».');
+      if (!key) continue;
+      if (Object.hasOwn(specs, key)) throw new Error('Повторяется характеристика «' + key + '». Названия должны быть уникальными.');
+      // Retain the original JSON scalar type until the value is actually edited.
+      const original = state.base.specs?.[key];
+      specs[key] = original != null && String(original) === value ? original : value || null;
+    }
+    product.specs = specs;
+    product.expected_specs = [...new Set($('#field-expected').value.split('\n').map(x => x.trim()).filter(Boolean))];
+    return product;
+  }
+  function updateStale() {
+    let stale = false;
+    if (state.current) {
+      try { stale = fingerprint(inputObject(state.raw)) !== state.snapshot; }
+      catch { stale = true; }
+      if (!$('#input-error').hidden) stale = true;
+    }
+    $('#stale-notice').hidden = !stale;
+  }
+  function changed() {
+    $('#input-state').textContent = 'Изменено';
+    showInputError();
+    if (state.inputTab === 'fields') {
+      try { state.raw = JSON.stringify(collectFields(), null, 2); $('#json-input').value = state.raw; }
+      catch (error) { showInputError(error.message); }
+    } else state.raw = $('#json-input').value;
+    updateStale();
+  }
+  function switchInput(tab) {
+    if (state.busy || tab === state.inputTab) return;
+    try {
+      if (tab === 'fields') populateFields(inputObject(state.raw));
+      else { state.raw = JSON.stringify(collectFields(), null, 2); $('#json-input').value = state.raw; }
+      showInputError();
+    } catch (error) { showInputError(error.message); return; }
+    state.inputTab = tab;
+    $('#fields-panel').hidden = tab !== 'fields'; $('#raw-panel').hidden = tab !== 'json';
+    $$('[data-input-tab]').forEach(el => {
+      const active = el.dataset.inputTab === tab;
+      el.classList.toggle('active', active); el.setAttribute('aria-selected', String(active)); el.tabIndex = active ? 0 : -1;
+    });
+  }
+  function setInput(product, label = 'Пример') {
+    state.raw = JSON.stringify(product, null, 2); $('#json-input').value = state.raw;
+    state.expandedSpecs = false; populateFields(product); showInputError();
+    $('#input-state').textContent = label; updateStale();
+  }
+  function formatMarkdown(card) {
+    const cell = x => String(x ?? '').replaceAll('|', '\\|').replaceAll('\n', ' ');
+    const lines = [`# ${card.product_name}`, ''];
+    if (card.status === 'needs_data') lines.push('**Недостаточно данных для генерации.**', '');
+    else lines.push('## SEO-заголовок', card.seo_title || '', '', '## SEO-описание', card.seo_description || '', '');
+    lines.push('## Характеристики', '| Параметр | Значение |', '| --- | --- |');
+    (card.key_characteristics || []).forEach(f => lines.push(`| ${cell(f.name)} | ${cell(f.value)} |`));
+    if (card.search_queries?.length) lines.push('', '## Поисковые запросы', ...card.search_queries.map(x => '- ' + x));
+    if (card.commercial_block) lines.push('', '## Для менеджера', card.commercial_block);
+    if (card.missing_fields?.length) lines.push('', '## Нужно уточнить', ...card.missing_fields.map(x => '- ' + x + ': данных нет'));
+    if (card.warnings?.length) lines.push('', '## Примечания', ...card.warnings.map(x => '- ' + x));
+    if (card.source_url) lines.push('', `Источник: ${card.source_url}`);
+    lines.push('', 'Черновик. Требуется проверка редактором.');
+    return lines.join('\n') + '\n';
+  }
+  function outputText(format) {
+    if (!state.current) return '';
+    return format === 'json' ? JSON.stringify(state.current, null, 2) : formatMarkdown(state.current);
+  }
+  function updateTools() {
+    const enabled = !!state.current && !state.busy;
+    $('#copy').disabled = !enabled; $('#export-menu-toggle').disabled = !enabled;
+    $('#show-demo').disabled = state.busy || state.selected === null;
+  }
+  function render() {
+    updateTools();
+    if (!state.current) {
+      $('#result').innerHTML = `<div class="empty-state"><div class="empty-icon">${icon('file')}</div><h3>Здесь будет карточка товара</h3><p>Добавьте исходные данные и подготовьте черновик.<br>Для примеров доступен результат без обращения к модели.</p></div>`;
+      $('#review-strip').hidden = true;
+      $('#status').textContent = 'Не создана'; $('#status').className = 'status-badge';
+      $('#output-origin').textContent = 'Без автоматической публикации';
+      return;
+    }
+    const card = state.current;
+    $('#status').textContent = card.status === 'needs_data' ? 'Нужны данные' : state.kind === 'sample' ? 'Образец' : 'Черновик';
+    $('#status').className = 'status-badge' + (card.status === 'needs_data' ? ' needs-data' : '');
+    $('#output-origin').textContent = state.kind === 'sample' ? 'Готовый пример · без вызова API' : card.status === 'needs_data' ? 'Недостаточно данных · без вызова API' : 'Сформировано через API';
+    const missing = card.missing_fields || [];
+    $('#review-strip').hidden = !missing.length;
+    $('#review-title').textContent = 'Нужно уточнить перед публикацией';
+    $('#review-text').textContent = missing.join(' · ');
+    if (state.outputTab === 'json' || state.outputTab === 'markdown') {
+      $('#result').innerHTML = `<pre>${esc(outputText(state.outputTab))}</pre>`;
+    } else if (state.outputTab === 'specs') {
+      $('#result').innerHTML = `<p class="table-intro">Значения перенесены из исходных данных. Отсутствующие параметры отмечены отдельно.</p><table class="facts-table"><thead><tr><th>Характеристика</th><th>Значение</th></tr></thead><tbody>${(card.key_characteristics || []).map(f => `<tr><td>${esc(f.name)}</td><td class="${f.verified ? '' : 'missing-value'}">${esc(f.value)}</td></tr>`).join('')}</tbody></table>`;
+    } else if (state.outputTab === 'manager') {
+      const url = urlSafe(card.source_url);
+      $('#result').innerHTML = `<section class="manager-section"><h3>Кому подходит и какие задачи решает</h3><p>${esc(card.commercial_block || 'Для этого блока пока недостаточно данных.')}</p></section>
+        ${missing.length ? `<section class="manager-section"><h3>Что запросить у поставщика</h3><ul class="missing-list">${missing.map(x => `<li>${esc(x)}<span>данных нет</span></li>`).join('')}</ul></section>` : ''}
+        ${card.warnings?.length ? `<section class="manager-section"><h3>Примечания к черновику</h3><ul class="warning-list">${card.warnings.map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>` : ''}
+        <section class="manager-section"><h3>Источник</h3>${url ? `<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Открыть страницу товара ${icon('external')}</a>` : '<p>Ссылка на источник не указана.</p>'}</section>`;
+    } else {
+      const title = card.seo_title || '', description = card.seo_description || '';
+      const n = x => Array.from(x).length.toLocaleString('ru-RU');
+      $('#result').innerHTML = description ? `<div class="title-block"><div class="content-label"><span>SEO-заголовок</span><span class="counter ${Array.from(title).length > 70 ? 'invalid' : ''}">${n(title)} / 70</span></div><h3>${esc(title)}</h3></div>
+        <div class="description-block"><div class="content-label"><span>SEO-описание</span><span class="counter ${Array.from(description).length < 800 || Array.from(description).length > 1200 ? 'invalid' : ''}">${n(description)} / 1 200</span></div>${description.split(/\n\s*\n/).map(p => `<p>${esc(p)}</p>`).join('')}</div>
+        ${card.search_queries?.length ? `<div class="query-block"><div class="content-label"><span>Поисковые запросы</span><span class="counter">${card.search_queries.length} запроса</span></div><div class="queries">${card.search_queries.map(q => `<span class="query">${esc(q)}</span>`).join('')}</div></div>` : ''}` : `<div class="empty-state"><div class="empty-icon">${icon('info')}</div><h3>Недостаточно исходных данных</h3><p>Дополните характеристики и описание товара. Список недостающих полей — во вкладке «Для менеджера».</p><button class="quiet-btn" id="see-missing" type="button">Посмотреть недостающие поля</button></div>`;
+    }
+    updateStale();
+  }
+  function switchOutput(tab) {
+    state.outputTab = tab;
+    $$('[data-tab]').forEach(el => {
+      const active = el.dataset.tab === tab;
+      el.classList.toggle('active', active); el.setAttribute('aria-selected', String(active)); el.tabIndex = active ? 0 : -1;
+    });
+    $('#result').setAttribute('aria-labelledby', 'tab-' + tab);
+    render();
+  }
+  function setCard(card, kind, source) {
+    state.current = card; state.kind = kind; state.snapshot = fingerprint(source);
+    showResultError(); render();
+  }
+  async function api(path, options = {}) {
+    // Standalone preview uses explicit, supplied fixtures; live generation is never simulated.
+    if (window.DRAFTLY_PREVIEW) {
+      if (path === '/api/examples') return clone(window.DRAFTLY_PREVIEW.products);
+      const match = path.match(/^\/api\/examples\/([^/]+)\/draft$/);
+      if (match && window.DRAFTLY_PREVIEW.cards[match[1]]) return clone(window.DRAFTLY_PREVIEW.cards[match[1]]);
+      throw new Error('Это автономный предпросмотр. Для настоящей генерации запустите Python-проект и подключите модель через Ollama или настройте облачный API в .env.');
+    }
+    const response = await fetch(path, options);
+    let body;
+    try { body = await response.json(); }
+    catch { throw new Error('Сервер вернул ответ, который не удалось прочитать. Повторите запрос.'); }
+    if (!response.ok) {
+      const detail = Array.isArray(body.detail) ? body.detail.map(x => `${(x.loc || []).filter(k => k !== 'body').join('.')}: ${x.msg}`).join('; ') : '';
+      throw new Error(body.message || detail || `Не удалось выполнить запрос (HTTP ${response.status}).`);
+    }
+    return body;
+  }
+  async function showSample() {
+    if (state.busy || state.selected === null) return;
+    const selected = state.selected, version = ++state.demoVersion;
+    try {
+      const card = await api(`/api/examples/${slugs[selected]}/draft`);
+      if (version !== state.demoVersion || state.selected !== selected) return;
+      setCard(card, 'sample', state.examples[selected]);
+      mobilePane('result');
+    } catch (error) { showResultError(error.message); }
+  }
+  async function selectProduct(index) {
+    if (state.busy || !state.examples[index]) return;
+    state.selected = index; state.current = null; state.snapshot = '';
+    setInput(state.examples[index]); renderProducts(); showResultError(); render();
+    await showSample();
+  }
+  function setBusy(value) {
+    state.busy = value;
+    $('#source-fields').disabled = value;
+    $('#json-input').disabled = value;
+    for (const id of ['generate', 'new-product', 'import-json', 'format-json']) $('#' + id).disabled = value;
+    $$('[data-product], [data-input-tab], [data-tab]').forEach(el => { el.disabled = value; });
+    $('#loading').hidden = !value; $('#result').hidden = value;
+    $('.output-pane').setAttribute('aria-busy', String(value));
+    $('#generate').innerHTML = value ? '<span>Подготавливаем…</span>' : '<span>Подготовить карточку</span>' + icon('arrow-right');
+    if (value) { $('#review-strip').hidden = true; $('#output-origin').textContent = 'Запрос к модели · ожидание ответа'; $('#status').textContent = 'В работе'; $('#export-menu').hidden = true; $('#export-menu-toggle').setAttribute('aria-expanded', 'false'); }
+    motion.loading?.setPaused(!value);
+    updateTools();
+  }
+  async function generate() {
+    if (state.busy) return;
+    let product;
+    try {
+      product = state.inputTab === 'fields' ? collectFields() : inputObject(state.raw);
+      if (!product.name?.trim()) throw new Error('Укажите название товара. Остальные отсутствующие поля можно оставить пустыми.');
+      if (product.source_url && !urlSafe(product.source_url)) throw new Error('Укажите корректный URL источника, начинающийся с http:// или https://.');
+      state.raw = JSON.stringify(product, null, 2); $('#json-input').value = state.raw;
+      showInputError();
+    } catch (error) { showInputError(error.message); mobilePane('source'); return; }
+    showResultError(); ++state.demoVersion;
+    const controller = new AbortController(); state.controller = controller;
+    const requestId = ++state.requestId;
+    setBusy(true); mobilePane('result');
+    try {
+      const card = await api('/api/generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(product), signal: controller.signal });
+      if (requestId !== state.requestId || controller.signal.aborted) return;
+      setCard(card, 'live', product);
+    } catch (error) {
+      if (error.name === 'AbortError') showToast('Ожидание отменено. Провайдер мог уже получить запрос.');
+      else showResultError(error instanceof TypeError ? 'Не удалось связаться с сервером. Проверьте, запущен ли сервис.' : error.message);
+    } finally {
+      if (requestId === state.requestId) { state.controller = null; setBusy(false); render(); }
+    }
+  }
+  async function copy() {
+    if (!state.current || state.busy) return;
+    const text = outputText(state.outputTab === 'json' ? 'json' : 'markdown');
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(state.outputTab === 'json' ? 'JSON скопирован' : 'Карточка скопирована в Markdown');
+    } catch {
+      // A clipboard failure must not erase the result.
+      switchOutput(state.outputTab === 'json' ? 'json' : 'markdown');
+      showToast('Буфер обмена недоступен. Скопируйте текст из открытой вкладки.');
+    }
+  }
+  function download(format) {
+    if (!state.current || state.busy) return;
+    const json = format === 'json';
+    const blob = new Blob([outputText(format)], { type: (json ? 'application/json' : 'text/markdown') + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    const name = String(state.current.product_name || 'product').replace(/[^\p{L}\p{N}._-]/gu, '-').slice(0, 100);
+    a.href = url; a.download = `${name}-card.${json ? 'json' : 'md'}`; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    $('#export-menu').hidden = true; $('#export-menu-toggle').setAttribute('aria-expanded', 'false');
+  }
+  function resetCustom(product, label) {
+    ++state.demoVersion; state.selected = null; state.current = null; state.snapshot = '';
+    setInput(product, label); renderProducts(); showResultError(); render(); mobilePane('source');
+  }
+  async function importFile(file) {
+    if (!file || state.busy) return;
+    try {
+      if (file.size > 200000) throw new Error('Для прототипа выберите JSON-файл размером не более 200 КБ.');
+      const product = inputObject((await file.text()).replace(/^\uFEFF/, ''));
+      resetCustom(product, 'Импортировано'); showToast('Данные товара импортированы');
+    } catch (error) { mobilePane('source'); showInputError(error.message); }
+  }
+  function bindTabKeyboard(selector) {
+    $$(selector).forEach(tab => tab.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const tabs = $$(selector).filter(el => !el.disabled), index = tabs.indexOf(tab);
+      const target = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      tabs[target].focus(); tabs[target].click();
+    }));
+  }
+  hydrateIcons();
+  motion.brand = window.ThinkingOrbs?.mount($('#brand-orb'), { size: 32, paused: true });
+  motion.loading = window.ThinkingOrbs?.mount($('#loading-orb'), { size: 64, paused: true });
+  motion.help = window.ThinkingOrbs?.mount($('#help-orb'), { size: 64, paused: true });
+  $('#product-list').addEventListener('click', event => {
+    const button = event.target.closest('[data-product]');
+    if (button) selectProduct(Number(button.dataset.product));
+  });
+  $('#fields-panel').addEventListener('submit', event => event.preventDefault());
+  $('#fields-panel').addEventListener('input', changed);
+  $('#json-input').addEventListener('input', changed);
+  $('#spec-rows').addEventListener('click', event => {
+    const button = event.target.closest('.remove-spec');
+    if (button && !state.busy) { button.closest('.spec-row').remove(); updateSpecVisibility(); changed(); }
+  });
+  $('#add-spec').addEventListener('click', () => {
+    state.expandedSpecs = true;
+    $('#spec-rows').insertAdjacentHTML('beforeend', specRow('', '', $$('.spec-row').length));
+    updateSpecVisibility(); $$('.spec-key').at(-1).focus();
+  });
+  $('#toggle-specs').addEventListener('click', () => { state.expandedSpecs = !state.expandedSpecs; updateSpecVisibility(); });
+  $$('[data-input-tab]').forEach(el => el.addEventListener('click', () => switchInput(el.dataset.inputTab)));
+  $$('[data-tab]').forEach(el => el.addEventListener('click', () => switchOutput(el.dataset.tab)));
+  $$('[data-mobile-view]').forEach(el => el.addEventListener('click', () => mobilePane(el.dataset.mobileView)));
+  bindTabKeyboard('[data-tab]'); bindTabKeyboard('[data-input-tab]');
+  $('#format-json').addEventListener('click', () => {
+    try { state.raw = JSON.stringify(inputObject($('#json-input').value), null, 2); $('#json-input').value = state.raw; showInputError(); updateStale(); }
+    catch (error) { showInputError(error.message); }
+  });
+  $('#generate').addEventListener('click', generate);
+  $('#show-demo').addEventListener('click', showSample);
+  $('#cancel').addEventListener('click', () => state.controller?.abort());
+  $('#copy').addEventListener('click', copy);
+  $('#export-menu-toggle').addEventListener('click', () => {
+    const open = $('#export-menu').hidden; $('#export-menu').hidden = !open;
+    $('#export-menu-toggle').setAttribute('aria-expanded', String(open));
+    if (open) $('[data-export]').focus();
+  });
+  $$('[data-export]').forEach(el => el.addEventListener('click', () => download(el.dataset.export)));
+  document.addEventListener('click', event => {
+    if (!event.target.closest('.export-wrap')) { $('#export-menu').hidden = true; $('#export-menu-toggle').setAttribute('aria-expanded', 'false'); }
+    if (event.target.closest('#see-missing')) switchOutput('manager');
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !$('#export-menu').hidden) { $('#export-menu').hidden = true; $('#export-menu-toggle').setAttribute('aria-expanded', 'false'); $('#export-menu-toggle').focus(); }
+  });
+  $('#review-open').addEventListener('click', () => { switchOutput('manager'); $('#result').focus(); });
+  $('#new-product').addEventListener('click', () => {
+    resetCustom({ name: '', manufacturer: '', specs: {}, description: '' }, 'Новый товар');
+    if (state.inputTab === 'fields') $('#field-name').focus(); else $('#json-input').focus();
+  });
+  $('#import-json').addEventListener('click', () => $('#file-input').click());
+  $('.api-link').addEventListener('click', event => {
+    if (window.DRAFTLY_PREVIEW) {
+      event.preventDefault();
+      showToast('API-документация доступна по /docs после запуска Python-сервера.');
+    }
+  });
+  $('#file-input').addEventListener('change', async event => { await importFile(event.target.files[0]); event.target.value = ''; });
+  const dialog = $('#help-dialog');
+  $$('.help-trigger').forEach(el => el.addEventListener('click', () => { dialog.showModal(); motion.help?.setPaused(false); }));
+  $('#close-help').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => motion.help?.setPaused(true));
+  dialog.addEventListener('click', event => {
+    const rect = dialog.getBoundingClientRect();
+    if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+  });
+  window.addEventListener('pagehide', () => { Object.values(motion).forEach(orb => orb?.destroy()); state.controller?.abort(); });
+  mobilePane('result'); render();
+  (async () => {
+    try {
+      state.examples = await api('/api/examples');
+      if (!Array.isArray(state.examples) || state.examples.length < 2) throw new Error('Не удалось загрузить два примера товаров.');
+      await selectProduct(0);
+    } catch (error) { showResultError(error.message); }
+  })();
+})();
+
+</script>
+</body>
+</html>

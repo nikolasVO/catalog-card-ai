@@ -1,0 +1,29 @@
+{
+  "checks": [
+    "initial_sample",
+    "product_switch_and_specs",
+    "missing_fields",
+    "json_markdown_and_keyboard_tabs",
+    "json_export",
+    "markdown_export",
+    "clipboard",
+    "clipboard_failure_preserves_result",
+    "form_json_sync_and_stale",
+    "bad_json_preserves_previous_result",
+    "edit_and_add_specs",
+    "duplicate_spec_validation",
+    "json_import",
+    "new_product_and_empty_validation",
+    "preview_does_not_fake_generation",
+    "real_orb_animation_and_busy_state",
+    "cancel_preserves_previous_result",
+    "successful_mocked_api_response",
+    "api_failure_preserves_result",
+    "escaped_model_output",
+    "help_dialog",
+    "responsive_320_390_768_1024_1440",
+    "prefers_reduced_motion"
+  ],
+  "total": 23,
+  "api_calls": "mocked; no paid LLM requests"
+}
