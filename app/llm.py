@@ -8,7 +8,7 @@ import httpx
 from app.config import Settings
 from app.errors import ServiceError
 from app.prompts import RESPONSE_SCHEMA, SYSTEM_PROMPT, user_prompt
-from app.schemas import ProductInput
+from app.schemas import GeneratedText, ProductInput
 
 
 def _reject_json_constant(_value: str) -> None:
@@ -39,7 +39,7 @@ class LLMClient:
                 "messages": messages,
                 "stream": False,
                 "think": False,
-                "format": RESPONSE_SCHEMA["json_schema"]["schema"],
+                "format": GeneratedText.model_json_schema(),
                 "options": {"temperature": 0, "num_predict": 2500, "num_ctx": 8192},
             }
             headers = {}

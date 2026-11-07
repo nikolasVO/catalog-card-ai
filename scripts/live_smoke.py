@@ -27,6 +27,22 @@ from app.service import CardService  # noqa: E402
 from scripts.verify_examples import CHECK_NAMES, verify_product  # noqa: E402
 
 
+class RecordedClient(LLMClient):
+    """Keep local diagnostic attempts; never confuse a rejected answer with a card."""
+
+    def __init__(self, settings: Settings, output_dir: Path):
+        super().__init__(settings)
+        self.audit_path = output_dir / "attempts.jsonl"
+
+    async def generate(self, product: ProductInput, correction: str = "") -> dict:
+        response = await super().generate(product, correction)
+        with self.audit_path.open("a", encoding="utf-8") as audit:
+            audit.write(json.dumps({
+                "product_name": product.name, "correction": correction, "response": response,
+            }, ensure_ascii=False) + "\n")
+        return response
+
+
 async def generate_all(output_dir: Path) -> int:
     try:
         cfg = Settings.from_env()
@@ -38,9 +54,9 @@ async def generate_all(output_dir: Path) -> int:
         return 2
     source = json.loads((ROOT / "examples" / "products.json").read_text(encoding="utf-8"))
     products = [ProductInput.model_validate(item) for item in source]
-    service = CardService(LLMClient(cfg))
     # A separate directory ensures the editorial samples cannot be mistaken for LLM output.
     output_dir.mkdir(parents=True, exist_ok=True)
+    service = CardService(RecordedClient(cfg, output_dir))
     records = []
     for slug, product in zip(CHECK_NAMES, products, strict=True):
         print(f"Calling {cfg.provider}/{cfg.active_model}: {product.name} ...", flush=True)
@@ -49,6 +65,8 @@ async def generate_all(output_dir: Path) -> int:
             verify_product(product, draft)
         except ServiceError as exc:
             print(f"LIVE FAILED [{slug}]: {exc.code}: {exc.message}", file=sys.stderr)
+            if exc.code == "LLM_OUTPUT_INVALID" and exc.__cause__:
+                print(f"VALIDATION: {exc.__cause__}", file=sys.stderr)
             return 1
         except AssertionError as exc:
             print(f"LIVE FAILED [{slug}]: {exc}", file=sys.stderr)

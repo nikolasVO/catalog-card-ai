@@ -68,6 +68,16 @@ def test_supplied_accuracy_class_cannot_reuse_error_percentage():
     assert not unsupported_claims(product, ["Класс точности — 1,5."])
 
 
+@pytest.mark.parametrize("claim,label", [
+    ("Интегрируется со SCADA через RS-485.", "SCADA"),
+    ("Прибор подходит для условий с умеренной пылью.", "защита от пыли"),
+    ("Возможность мгновенного оповещения об отклонениях.", "мгновенное срабатывание"),
+    ("Контроллер температуры УКТ38.", "контроллер"),
+])
+def test_real_model_inferences_require_explicit_source_support(products, claim, label):
+    assert label in unsupported_claims(products[1], [claim])
+
+
 @pytest.mark.parametrize("text", [
     "Питание — 90–264 А.",
     "Питание — 264–90 В.",

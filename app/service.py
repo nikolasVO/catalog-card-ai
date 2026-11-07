@@ -42,6 +42,25 @@ def factual_characteristics(product: ProductInput) -> tuple[list[Characteristic]
     return result, missing
 
 
+def correction_hint(error: ValidationError | ValueError, raw: dict) -> str:
+    """Give the model actionable limits without echoing its rejected prose."""
+    if isinstance(error, ValidationError):
+        issues = []
+        for detail in error.errors(include_input=False):
+            field = str(detail["loc"][0]) if detail["loc"] else "ответ"
+            value = raw.get(field)
+            length = f"; получено {len(value)} символов" if isinstance(value, str) else ""
+            issues.append(f"{field}: {detail['msg']}{length}")
+        message = "; ".join(issues)
+    else:
+        message = str(error)
+    return (
+        message[:1100]
+        + ". Верни весь JSON заново. SEO-описание сократи или дополни до 950–1050 символов "
+          "с пробелами, выбрав только основные факты. Заголовок: производитель и модель, максимум 70 символов."
+    )
+
+
 class CardService:
     def __init__(self, llm: CopyGenerator):
         self.llm = llm
@@ -84,7 +103,7 @@ class CardService:
                 if claims:
                     raise ValueError("в тексте появились неподтверждённые утверждения: " + ", ".join(sorted(claims)))
             except (ValidationError, ValueError) as exc:
-                correction = str(exc)[:1500]
+                correction = correction_hint(exc, raw)
                 if attempt == 0:
                     continue
                 raise ServiceError(

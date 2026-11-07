@@ -8,7 +8,6 @@ import pytest
 from app.config import Settings
 from app.errors import ServiceError
 from app.llm import LLMClient
-from app.prompts import RESPONSE_SCHEMA
 from app.schemas import CardOutput
 
 
@@ -35,7 +34,10 @@ async def test_native_payload_and_response_without_sending_an_api_key(products, 
         assert payload["model"] == "qwen3.5:9b"
         assert payload["think"] is False
         assert payload["stream"] is False
-        assert payload["format"] == RESPONSE_SCHEMA["json_schema"]["schema"]
+        assert payload["format"]["properties"]["seo_description"]["minLength"] == 800
+        assert payload["format"]["properties"]["seo_description"]["maxLength"] == 1200
+        assert payload["format"]["properties"]["seo_title"]["maxLength"] == 70
+        assert payload["format"]["additionalProperties"] is False
         assert payload["options"] == {"temperature": 0, "num_predict": 2500, "num_ctx": 8192}
         assert "response_format" not in payload
         assert "keep_alive" not in payload
