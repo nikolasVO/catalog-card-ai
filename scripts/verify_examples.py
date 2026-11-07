@@ -81,12 +81,13 @@ def main() -> int:
     args = parser.parse_args()
     try:
         verified = verify_files(args.output_dir)
-        if args.require_manifest or (args.output_dir / "manifest.json").exists():
+        recorded = args.require_manifest or (args.output_dir / "manifest.json").exists()
+        if recorded:
             verify_manifest(args.output_dir)
     except (FileNotFoundError, AssertionError, ValueError, KeyError, TypeError) as exc:
         print(f"FAILED: {exc}", file=sys.stderr)
         return 1
-    print("Examples validated (bundled outputs are editorial reference drafts, not live LLM responses):")
+    print("Recorded API responses and provenance validated:" if recorded else "Editorial reference drafts validated (no API calls):")
     for item in verified:
         print(f"  {item}")
     return 0
