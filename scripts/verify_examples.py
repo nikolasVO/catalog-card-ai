@@ -24,9 +24,10 @@ CHECK_NAMES = ("tachometer", "temperature-monitor")
 def verify_product(product: ProductInput, draft: CardOutput) -> None:
     """Check schema/length/card provenance for a draft and its exact input."""
     assert draft.status == "draft", f"Expected draft, got {draft.status}"
-    GeneratedText.model_validate({key: getattr(draft, key) for key in (
+    checked = GeneratedText.model_validate({key: getattr(draft, key) for key in (
         "seo_title", "seo_description", "search_queries", "commercial_block",
     )})
+    assert checked.seo_description == draft.seo_description, "Stored draft contains an unfinished sentence"
     assert draft.product_name == product.name
     assert draft.manufacturer == (product.manufacturer or "данных нет")
     assert 5 <= len(draft.seo_title) <= 70
@@ -76,10 +77,11 @@ def verify_manifest(output_dir: Path) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "examples" / "outputs")
+    parser.add_argument("--require-manifest", action="store_true", help="Require provenance hashes for recorded API responses")
     args = parser.parse_args()
     try:
         verified = verify_files(args.output_dir)
-        if (args.output_dir / "manifest.json").exists():
+        if args.require_manifest or (args.output_dir / "manifest.json").exists():
             verify_manifest(args.output_dir)
     except (FileNotFoundError, AssertionError, ValueError, KeyError, TypeError) as exc:
         print(f"FAILED: {exc}", file=sys.stderr)

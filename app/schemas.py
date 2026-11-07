@@ -1,5 +1,6 @@
 """Input and output contracts exposed by HTTP API and CLI."""
 import math
+import re
 from typing import Any, Literal
 from urllib.parse import urlsplit
 
@@ -90,6 +91,20 @@ class GeneratedText(BaseModel):
     seo_description: str = Field(min_length=800, max_length=1200)
     search_queries: list[str] = Field(min_length=3, max_length=5)
     commercial_block: str = Field(min_length=40, max_length=450)
+
+    @field_validator("seo_description")
+    @classmethod
+    def complete_sentences(cls, value: str) -> str:
+        # A schema-constrained local model can hit maxLength in mid-sentence.
+        # Keep only its completed sentences, without adding or rewriting facts.
+        if re.search(r'[.!?][»”\"]?$', value):
+            return value
+        endings = list(re.finditer(r'[.!?][»”\"]?(?=\s|$)', value))
+        if endings:
+            complete = value[:endings[-1].end()].rstrip()
+            if len(complete) >= 800:
+                return complete
+        raise ValueError("описание должно содержать 800–1200 символов завершённых предложений")
 
     @field_validator("search_queries")
     @classmethod

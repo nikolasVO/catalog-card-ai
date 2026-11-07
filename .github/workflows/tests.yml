@@ -26,5 +26,7 @@ jobs:
         run: python -m pytest -q
       - name: Validate bundled examples
         run: python scripts/verify_examples.py
+      - name: Validate recorded local-model responses and provenance
+        run: python scripts/verify_examples.py --output-dir examples/outputs/live --require-manifest
       - name: Compile Python sources
         run: python -m compileall -q app scripts

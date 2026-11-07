@@ -142,3 +142,6 @@ async def test_live_smoke_does_not_skip_native_provider_without_a_key(tmp_path, 
     output.write_text(output.read_text() + "\n")
     with pytest.raises(AssertionError, match="Live response changed"):
         verify_manifest(tmp_path)
+    service.generate.side_effect = ServiceError("LLM_OUTPUT_INVALID", "Rejected draft", 502)
+    assert await live_smoke.generate_all(tmp_path) == 1
+    assert not (tmp_path / "manifest.json").exists()

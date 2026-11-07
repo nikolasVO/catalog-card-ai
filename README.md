@@ -5,6 +5,8 @@
 **SEO-описание 800–1200 символов**, список характеристик, **3–5 поисковых запросов**
 и краткий блок для менеджера.
 
+Репозиторий: [nikolasVO/catalog-card-ai](https://github.com/nikolasVO/catalog-card-ai).
+
 Характеристики формируются **в Python из входного JSON**. LLM отвечает за
 редакторский текст; ответ проверяется по схеме, длине и соответствию технических
 значений исходнику. Эти проверки не заменяют редакторскую проверку смысла.
@@ -157,6 +159,11 @@ python -m app.cli --input examples/products.json --output-dir output
 - Точные XML-записи двух предложений из исходного файла: [`examples/feed_excerpt.xml`](examples/feed_excerpt.xml).
 - Полные **подготовленные входные данные**: [`examples/products.json`](examples/products.json).
 - Происхождение параметров и ограничения источников: [`docs/SOURCES.md`](docs/SOURCES.md).
+- **Реальная генерация Ollama / Qwen3.5 9B**: [тахометр](examples/outputs/live/tachometer.md)
+  и [измеритель температуры](examples/outputs/live/temperature-monitor.md).
+  [Манифест](examples/outputs/live/manifest.json) фиксирует модель, версию промпта
+  и SHA256 входных данных и результатов; подробности проверки — в
+  [`docs/VERIFICATION.md`](docs/VERIFICATION.md).
 - **Результат 1**, тахометр: [`examples/outputs/tachometer.md`](examples/outputs/tachometer.md), [`JSON`](examples/outputs/tachometer.json).
 - **Результат 2**, контроль температуры: [`examples/outputs/temperature-monitor.md`](examples/outputs/temperature-monitor.md), [`JSON`](examples/outputs/temperature-monitor.json).
 
@@ -164,10 +171,12 @@ python -m app.cli --input examples/products.json --output-dir output
 
 ![Предпросмотр карточки](docs/screenshot-desktop.png)
 
-**Примеры в `examples/outputs/` — вручную составленные редакторские образцы.**
-Они показывают формат результата и не являются ответами LLM. Реальные ответы
-сохраняются отдельно скриптом `scripts/live_smoke.py`; успешный вызов API
-следует подтверждать его результатами. Автотесты используют подменные
+**Файлы непосредственно в `examples/outputs/` — вручную составленные редакторские образцы.**
+Они показывают формат результата и не являются ответами LLM. Подкаталог
+`examples/outputs/live/` содержит отдельные результаты настоящего запуска
+`scripts/live_smoke.py`. Эти тексты вручную не переписывались; сервис может
+удалить незавершённое последнее предложение с явным предупреждением, если
+остаётся не менее 800 символов полного текста. Автотесты используют подменные
 HTTP-ответы провайдера.
 
 У обоих примеров `Класс точности` отмечен «данных нет» — указание на измерительную
@@ -221,6 +230,8 @@ python -m pytest -q
 
 ```bash
 python scripts/verify_examples.py
+# Проверить опубликованные ответы модели и SHA256 манифеста:
+python scripts/verify_examples.py --output-dir examples/outputs/live --require-manifest
 ```
 
 Команда валидирует реальные JSON-файлы, входные характеристики, длины SEO-полей,
@@ -241,6 +252,9 @@ python scripts/live_smoke.py
 в форматах `.json` и `.md`. Отдельный каталог предотвращает подмену исходных
 редакторских примеров. Для Ollama используется ресурс машины с моделью;
 облачные запросы расходуют квоту провайдера.
+После успешной обработки обоих товаров создаётся `manifest.json`.
+Диагностические ответы и причины повторных попыток записываются в
+`output/live/attempts.jsonl` и не публикуются вместе с карточками.
 
 ```bash
 # Перепроверить сохранённые реальные ответы (если live smoke прошёл):
@@ -278,6 +292,7 @@ app/
 examples/
   products.json      два входа
   outputs/           два редакторских образца в JSON и Markdown
+  outputs/live/      два проверенных результата Ollama и манифест
 tests/               тесты с подменными ответами LLM
 docs/SOURCES.md      происхождение входных параметров
 docs/DECISIONS.md    подробности, ограничения и улучшения

@@ -1,0 +1,26 @@
+{
+  "generated_at": "2026-11-07T09:21:39.790585+00:00",
+  "provider": "ollama",
+  "model": "qwen3.5:9b",
+  "prompt_version": "1.3",
+  "origin": "real API responses validated by CardService; no editorial fixtures reused",
+  "postprocessing": "An unfinished final sentence may be removed if at least 800 complete characters remain; card warnings disclose this.",
+  "records": [
+    {
+      "slug": "tachometer",
+      "input_sha256": "cdc09acc349da83ec366b1136f53a3fd730ac8f8af9b5f9d213dc920c583b6d5",
+      "output_sha256": "f49664d716052b067a2b9c2609c37ccfccf56b77530fec5d456bee0b6fbc81a2",
+      "seo_title_length": 51,
+      "seo_description_length": 1048,
+      "search_queries_count": 3
+    },
+    {
+      "slug": "temperature-monitor",
+      "input_sha256": "a98a33de93db00c1d420a0eb828c78aa551274eae20488bd1d8f443c49b36a43",
+      "output_sha256": "4492d78941aaaacfd2d8977c15ec26974e2f0b29cc5af3997c0e19ef55d79fc2",
+      "seo_title_length": 57,
+      "seo_description_length": 1194,
+      "search_queries_count": 3
+    }
+  ]
+}

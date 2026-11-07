@@ -143,3 +143,28 @@ async def test_unsupported_interface_retries_even_when_key_was_supplied(products
     with pytest.raises(ServiceError):
         await CardService(llm).generate(product)
     assert llm.generate.await_count == 2
+
+
+@pytest.mark.asyncio
+async def test_schema_cutoff_keeps_only_complete_sentences_and_marks_the_change(products, example_cards):
+    copy = {key: example_cards[0][key] for key in (
+        "seo_title", "seo_description", "search_queries", "commercial_block",
+    )}
+    copy["seo_description"] += " Последняя оборванная фраза"
+    llm = AsyncMock()
+    llm.generate.return_value = copy
+    card = await CardService(llm).generate(products[0])
+    assert card.seo_description == example_cards[0]["seo_description"]
+    assert any("Оборванное" in warning for warning in card.warnings)
+
+
+def test_unfinished_prose_without_enough_completed_sentences_is_rejected(example_cards):
+    from pydantic import ValidationError
+    from app.schemas import GeneratedText
+
+    copy = {key: example_cards[0][key] for key in (
+        "seo_title", "seo_description", "search_queries", "commercial_block",
+    )}
+    copy["seo_description"] = "Незавершённое описание " * 40
+    with pytest.raises(ValidationError, match="завершённых предложений"):
+        GeneratedText.model_validate(copy)

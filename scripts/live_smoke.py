@@ -56,6 +56,7 @@ async def generate_all(output_dir: Path) -> int:
     products = [ProductInput.model_validate(item) for item in source]
     # A separate directory ensures the editorial samples cannot be mistaken for LLM output.
     output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "manifest.json").unlink(missing_ok=True)
     service = CardService(RecordedClient(cfg, output_dir))
     records = []
     for slug, product in zip(CHECK_NAMES, products, strict=True):
@@ -90,6 +91,7 @@ async def generate_all(output_dir: Path) -> int:
         "model": cfg.active_model,
         "prompt_version": PROMPT_VERSION,
         "origin": "real API responses validated by CardService; no editorial fixtures reused",
+        "postprocessing": "An unfinished final sentence may be removed if at least 800 complete characters remain; card warnings disclose this.",
         "records": records,
     }
     (output_dir / "manifest.json").write_text(
